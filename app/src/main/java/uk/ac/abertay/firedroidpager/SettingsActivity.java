@@ -42,16 +42,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         // Set on click listener.
         savepref.setOnClickListener(this);
         // Load Shared Preferences (To UI).
-        Alert1 = SPH.getSharedPreferenceString(this, "AlertKey1", Alert1);
+        Alert1 = SharedPreferencesHelper.getSharedPreferenceString(this, "AlertKey1", Alert1);
         editalert1.setText(Alert1);
-        Alert2 = SPH.getSharedPreferenceString(this, "AlertKey2", Alert2);
+        Alert2 = SharedPreferencesHelper.getSharedPreferenceString(this, "AlertKey2", Alert2);
         editalert2.setText(Alert2);
-        Vibrate = SPH.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
+        Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
         enablevibrationcb.setChecked(Vibrate);
-        DisableApp = SPH.getSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
+        DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
         disableappcb.setChecked(DisableApp);
-        Audio = SPH.getSharedPreferenceString(this, "AudioName", Audio);
-        VibrateM = SPH.getSharedPreferenceInt(this, "VibrateMode", VibrateM);
+        Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
+        VibrateM = SharedPreferencesHelper.getSharedPreferenceInt(this, "VibrateMode", VibrateM);
     }
 
     @Override
@@ -67,12 +67,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 VibrateM = 1;
                 // Check strings for null data, log/error if null data.
                 if(Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
-                    SPH.setSharedPreferenceString(this, "AlertKey1", Alert1);
-                    SPH.setSharedPreferenceString(this, "AlertKey2", Alert2);
-                    SPH.setSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
-                    SPH.setSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
-                    SPH.setSharedPreferenceString(this, "AudioName", Audio);
-                    SPH.setSharedPreferenceInt(this, "VibrateMode", VibrateM);
+                    SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey1", Alert1);
+                    SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey2", Alert2);
+                    SharedPreferencesHelper.setSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
+                    SharedPreferencesHelper.setSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
+                    SharedPreferencesHelper.setSharedPreferenceString(this, "AudioName", Audio);
+                    SharedPreferencesHelper.setSharedPreferenceInt(this, "VibrateMode", VibrateM);
                 } else {
                     // Error (No Data Entered) - Toast + Log.d
                     Toast.makeText(getApplicationContext(),"ERROR: No Data Entered. Enter Keywords",Toast.LENGTH_LONG).show();

@@ -57,10 +57,10 @@ public class SMSListenerHelper extends BroadcastReceiver {
                     // Insert SMS data
                     boolean insertData = DB.insertDataDB(sms);
                     // Error logging.
-                    if(insertData == true) {
+                    if (insertData) {
                     // Debug Message
                     Log.i(ETAG," SQL: Saved Successfully. " + sms);
-                    main.aStatus = true;
+                        MainActivity.aStatus = true;
 
                     } else {
                         Log.i(ETAG," SQL: Not Saved Successfully.");
@@ -74,7 +74,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
                     } else {
                         Log.i(ETAG," Not 911 Call");
-                        main.aStatus = false;
+                    MainActivity.aStatus = false;
                 }
             }
         }
