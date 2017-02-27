@@ -1,9 +1,7 @@
 package uk.ac.abertay.firedroidpager;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,7 +14,7 @@ public class HazmatActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hazmat);
-        // Initalize button
+        // Initialize button
         Button hazsearch = (Button) findViewById(R.id.button_hazsearch);
         // Set Button listener.
         hazsearch.setOnClickListener(this);
@@ -26,7 +24,7 @@ public class HazmatActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
     switch (v.getId()) {
         case R.id.button_hazsearch:
-            // Initalize EditText
+            // Initialize EditText
             EditText editsearchterm = (EditText) findViewById(R.id.edit_hazmatsearch);
             // Get EditText data, convert to string and then submit search term to hazmat search function.
             String searchterm = editsearchterm.getText().toString();
@@ -37,7 +35,7 @@ public class HazmatActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void hazmatSearch(String searchterm) {
-     // Initalize webview
+        // Initialize webview
      WebView hazmatview = (WebView) findViewById(R.id.hazmatWebview);
      // Set search URL + param string
      String webaddress = "http://www.hazmattool.com/info.php?submit2=search&info_name=" + searchterm + "&info_hazclass=+&submit=search";

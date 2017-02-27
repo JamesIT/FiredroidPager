@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListView list=(ListView)findViewById(R.id.smslistview);
         // Initialize Arrays/Adapter/Button ect
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void populateListView() {
         // Initialize ListView
-        ListView list=(ListView)findViewById(R.id.smslistview);
+        ListView list = (ListView) findViewById(R.id.smslistview);
         // Initialize Arraylist+Adapter
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);

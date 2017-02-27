@@ -57,7 +57,7 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 contentVal.put(COL2,sql1);
                 contentVal.put(COL3,date);
                 // Insert data (To Table)
-                long results = db.insert(TABLE_NAME, null, contentVal);
+                db.insert(TABLE_NAME, null, contentVal);
                 // Close DB After Insertion
                 db.close();
             }

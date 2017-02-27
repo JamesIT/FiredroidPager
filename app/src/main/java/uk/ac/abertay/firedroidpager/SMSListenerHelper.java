@@ -39,6 +39,8 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
             try {
                 Object[] smspdu = (Object[]) smsbundle.get("pdus");
+                // Prevent possible null pointer exception
+                assert smspdu != null;
                 currSMS = new SmsMessage[smspdu.length];
 
                 for (int i = 0; i < currSMS.length; i++) {
