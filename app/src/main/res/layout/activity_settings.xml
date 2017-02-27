@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="uk.ac.abertay.firedroidpager.SettingsActivity">
+
+    <Button
+        android:text="Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:id="@+id/button_savesettings"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginTop="27dp"
+        android:id="@+id/editText_keyword"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentEnd="true"
+        android:hint="Enter keyword."
+        android:layout_toEndOf="@+id/textView_setaudio" />
+
+    <TextView
+        android:text="@string/keyword_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_keyword"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/editText_keyword"
+        android:layout_alignBottom="@+id/editText_keyword"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/settings_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textSize="18sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_below="@+id/editText_keyword"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/editText_keyword2"
+        android:hint="Enter keyword."
+        android:layout_alignStart="@+id/editText_keyword" />
+
+    <TextView
+        android:text="@string/keyword_alert2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_keyword2"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/editText_keyword2"
+        android:layout_alignBottom="@+id/editText_keyword2"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/change_audiotv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_setaudio"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/button_setaudio"
+        android:layout_alignBottom="@+id/button_setaudio"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="set audio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_setaudio"
+        android:layout_below="@+id/editText_keyword2"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:text="Enable Vibration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_vibrate"
+        android:textSize="18sp"
+        android:layout_below="@+id/button_setaudio"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox_vibration"
+        android:layout_alignBaseline="@+id/textView_vibrate"
+        android:layout_alignBottom="@+id/textView_vibrate"
+        android:layout_alignStart="@+id/button_setaudio"
+        android:layout_marginStart="27dp"
+        android:checked="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox_disableapp"
+        android:layout_alignBaseline="@+id/textView_disableapp"
+        android:layout_alignBottom="@+id/textView_disableapp"
+        android:layout_alignStart="@+id/checkBox_vibration" />
+
+    <TextView
+        android:text="@string/disable_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_disableapp"
+        android:textSize="18sp"
+        android:layout_below="@+id/checkBox_vibration"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
