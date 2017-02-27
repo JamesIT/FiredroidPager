@@ -28,17 +28,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static Boolean aStatus = false;
     private static Context context;
-    public final String ETAG = "Incoming SMS: ";
+    private final String ETAG = "Incoming SMS: ";
     // Set/Define Audio Variable String
-    public String Audio = "nz_callout";
-    // Define Arrays/Adapters/String/Buttons ect
-    String sms = "";
-    Boolean Vibrate = true;
-    ArrayAdapter<String> adapter;
-    ArrayList<String> SMSArray;
-    Button bclearalerts;
+    private String Audio = "nz_callout";
+    private Boolean Vibrate = true;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> SMSArray;
+    private Button bclearalerts;
     // Define DatabaseHelper
-    SQLDatabaseHelper DB;
+    private SQLDatabaseHelper DB;
     private ListView list;
     private Button button_dismiss;
     // Define Alert Dialog/Audio
@@ -162,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void populateListView() {
+    private void populateListView() {
         // Initialize ListView
         ListView list = (ListView) findViewById(R.id.smslistview);
         // Initialize Arraylist+Adapter
@@ -171,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Initialize DB Helper
         DB = new SQLDatabaseHelper(this);
         // Get SMS Data
-        sms = DB.getDataDB();
+        String sms = DB.getDataDB();
         // Add SMS to adapter
         adapter.add(sms);
         // Set Adapter
@@ -184,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DB.close();
     }
 
-    public void Alert911() {
+    private void Alert911() {
         Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
         // Set Handset Volume - 100%. (Incase of volume turned off).
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -222,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void Alert911Stop() {
+    private void Alert911Stop() {
         // Initialize Vibrator
     Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
     // Stop volume & Release/Reset if !=null && isPlaying

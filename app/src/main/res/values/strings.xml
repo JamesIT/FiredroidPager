@@ -12,4 +12,5 @@
     <string name="about_author">By James Hemmings</string>
     <string name="about_copyright">© Copyright James Hemmings 2017</string>
     <string name="emergency_call">!! Emergency !! - 911 Call</string>
+    <string name="firetruck_txtdesc">Firetruck Image</string>
 </resources>

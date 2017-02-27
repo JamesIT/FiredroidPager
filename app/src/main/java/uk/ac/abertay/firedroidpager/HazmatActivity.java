@@ -34,7 +34,7 @@ public class HazmatActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void hazmatSearch(String searchterm) {
+    private void hazmatSearch(String searchterm) {
         // Initialize webview
      WebView hazmatview = (WebView) findViewById(R.id.hazmatWebview);
      // Set search URL + param string

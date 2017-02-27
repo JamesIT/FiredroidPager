@@ -43,7 +43,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
                 for (int i = 0; i < currSMS.length; i++) {
                     currSMS[i] = SmsMessage.createFromPdu((byte[]) smspdu[i]);
-                    String smsFrom = currSMS[i].getOriginatingAddress();
+                    //String smsFrom = currSMS[i].getOriginatingAddress();
                     smsMesg += currSMS[i].getMessageBody();
                 }
 
