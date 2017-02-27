@@ -18,14 +18,20 @@ public class SMSListenerHelper extends BroadcastReceiver {
     private String smsMesg;
     private String smsFrom;
     private String sms;
+    private String Alert1;
+    private String Alert2;
+    private Boolean DisableApp = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         DB = new SQLDatabaseHelper(context);
+        Alert1 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey1", Alert1);
+        Alert2 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey2", Alert2);
+        DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(MainActivity.getAppContext(), "DisableSMS", DisableApp);
         // Execute code if SMS_RECEIVED intent.
-        if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
+        if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED") && !DisableApp) {
             // Define bundle + Initialize - Get intent extras.
-        Bundle smsbundle = intent.getExtras(); // Get SMS message
+            Bundle smsbundle = intent.getExtras(); // Get SMS message
             SmsMessage[] currSMS;
             // Define + Initialize object and get pdus.
         // Execute code if not null.
@@ -34,8 +40,6 @@ public class SMSListenerHelper extends BroadcastReceiver {
             try {
                 Object[] smspdu = (Object[]) smsbundle.get("pdus");
                 currSMS = new SmsMessage[smspdu.length];
-                String msgBody = "";
-                String msgfrom = "";
 
                 for (int i = 0; i < currSMS.length; i++) {
                     currSMS[i] = SmsMessage.createFromPdu((byte[]) smspdu[i]);
@@ -49,11 +53,10 @@ public class SMSListenerHelper extends BroadcastReceiver {
             }
                 // Remove null word from SMS data into sms string
                 sms = smsMesg.substring(4);
-
                  // Debug
                 Log.i(ETAG,"SQL: SMS Data - " + sms);
-                // Check SMS for keyword
-                if (sms.contains("FIRE") || sms.contains("EMS")) {
+            // Check SMS for keyword - From Shared Preferences
+            if (sms.contains(Alert1) || sms.contains(Alert2)) {
                     // Insert SMS data
                     boolean insertData = DB.insertDataDB(sms);
                     // Error logging.
@@ -77,6 +80,9 @@ public class SMSListenerHelper extends BroadcastReceiver {
                     MainActivity.aStatus = false;
                 }
             }
+        } else {
+            // Debug Message - SMS Alerting Disabled
+            Log.i(ETAG, " SMS: " + "SMS Alerts Disabled.");
         }
     }
 

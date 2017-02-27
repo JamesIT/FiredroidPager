@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static Boolean aStatus = false;
+    private static Context context;
     public final String ETAG = "Incoming SMS: ";
     // Set/Define Audio Variable String
     public String Audio = "nz_callout";
@@ -43,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MediaPlayer alert;
     private AlertDialog dialog;
 
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bclearalerts = (Button)findViewById(R.id.button_clearalerts);
         // Sets on click listener.
         bclearalerts.setOnClickListener(this);
+        MainActivity.context = getApplicationContext();
         // Check SDK version, if less than SDK 23 (Error). Else, request permissions.
         if(Build.VERSION.SDK_INT < 23){
             Log.i(ETAG," Permissions: " + "SDK Less Than 23 - No Perms Needed.");
