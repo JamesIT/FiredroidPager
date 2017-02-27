@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.format.DateFormat;
 import android.util.Log;
+
 import java.sql.Date;
 
 public class SQLDatabaseHelper extends SQLiteOpenHelper {
@@ -57,7 +58,6 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 contentVal.put(COL3,date);
                 // Insert data (To Table)
                 long results = db.insert(TABLE_NAME, null, contentVal);
-
                 // Close DB After Insertion
                 db.close();
             }
@@ -67,13 +67,14 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
 
     // Get all tables from DB
     public String getDataDB() {
+
         // Define DB Helper
         final SQLiteDatabase db = this.getWritableDatabase();
 
                 Cursor data = db.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME, null);
 
                 if (data.getCount() == 0) {
-                    Log.i("SMS", "SQL: No Data To Read??");
+                    Log.i("SMS", "SQL: No Data To Read??.");
                 } else {
                     StringBuffer buffer = new StringBuffer();
                     while (data.moveToNext()) {
@@ -86,5 +87,21 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 // Close DB Cursor
                 data.close();
                 return datastring;
+    }
+
+    public String removeDataDB() {
+        // Define SQLite DB & Get writable database.
+        final SQLiteDatabase db = this.getWritableDatabase();
+        // Initialize cursor & Execute raw query (Delete data).
+        Cursor data = db.rawQuery("DELETE FROM " + TABLE_NAME, null);
+        // If no data or is data log message
+        if (data.getCount() == 0) {
+            Log.i("SMS", "SQL: No Data To Delete.");
+        } else {
+            Log.i("SMS", "SQL: Data Deleted.");
+        }
+        // Close Database.
+        data.close();
+        return datastring;
     }
 }

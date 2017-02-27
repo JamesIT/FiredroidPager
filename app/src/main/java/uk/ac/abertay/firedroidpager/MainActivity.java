@@ -3,16 +3,16 @@ package uk.ac.abertay.firedroidpager;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,42 +21,49 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static Boolean aStatus = false;
+    public final String ETAG = "Incoming SMS: ";
+    // Set/Define Audio Variable String
+    public String Audio = "nz_callout";
     // Define Arrays/Adapters/String/Buttons ect
     String sms = "";
     ArrayAdapter<String> adapter;
     ArrayList<String> SMSArray;
-    private ListView list;
-    private Button button_dismiss;
+    Button bclearalerts;
     // Define DatabaseHelper
     SQLDatabaseHelper DB;
+    private ListView list;
+    private Button button_dismiss;
     // Define Alert Dialog/Audio
     private MediaPlayer alert;
     private AlertDialog dialog;
-    public final String ETAG = "Incoming SMS: ";
-    // Set/Define Audio Variable String
-    public String Audio = "cadpage";
-    public static Boolean aStatus = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ListView list=(ListView)findViewById(R.id.smslistview);
+        // Initialize Arrays/Adapter/Button ect
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
+        bclearalerts = (Button)findViewById(R.id.button_clearalerts);
+        // Sets on click listener.
+        bclearalerts.setOnClickListener(this);
         // Check SDK version, if less than SDK 23 (Error). Else, request permissions.
         if(Build.VERSION.SDK_INT < 23){
-            // Random??
+            Log.i(ETAG," Permissions: " + "SDK Less Than 23 - No Perms Needed.");
         }else {
+            // Request Android Permissions (SMS Read/Write).
             requestSmsPermission();
         }
         // Populate List View
         populateListView();
-        if (aStatus == true) {
+        if (aStatus) {
             Alert911();
             aStatus = false;
         }
@@ -126,15 +133,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     @Override
     public void onClick(View v) {
     switch (v.getId()) {
-        case R.id.button_dismiss:
-            dialog.dismiss();
-            Alert911Stop();
+        default:
             break;
-    }
+        case R.id.button_dismiss:
+            // Dismiss Dialog
+            dialog.dismiss();
+            // Stop Pager Alerting
+            Alert911Stop();
+            populateListView();
+            break;
+        case R.id.button_clearalerts:
+            // Clear SMS Alerting SQLite.
+            DB = new SQLDatabaseHelper(this);
+            DB.removeDataDB();
+            // Close DB
+            DB.close();
+            populateListView();
+            break;
+        }
     }
 
     public void populateListView() {
@@ -155,9 +174,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.notifyDataSetChanged();
         // Debug Message
         Log.i(ETAG,"SQL: Read " + sms);
+        // Close DB
+        DB.close();
     }
 
     public void Alert911() {
+        // Set Handset Volume - 100%. (Incase of volume turned off).
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
         // Get sound_id - File Name (String Audio)
         int sound_id = getApplicationContext().getResources().getIdentifier(Audio, "raw", this.getPackageName());
         // Create Media Player
@@ -190,12 +214,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void Alert911Stop() {
     // Initalize Vibrator
     Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-    // Stop volume & Release
-    alert.setLooping(false);
-    alert.stop();
+    // Stop volume & Release/Reset if !=null && isPlaying
+    if (alert!=null) {
+        if (alert.isPlaying())
+            alert.setLooping(false);
+            alert.stop();
+    alert.reset();
     alert.release();
-    // Disable Volume
+    alert=null;
+    }
+    // Disable Vibration
     v.vibrate(0);
+    // Closes Current Activity - Save Memory Usage ect...
+    this.finish();
     }
 
 }

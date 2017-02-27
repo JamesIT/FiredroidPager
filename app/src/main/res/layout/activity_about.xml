@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_about"
     android:layout_width="match_parent"
@@ -11,30 +12,39 @@
     tools:context="uk.ac.abertay.firedroidpager.AboutActivity">
 
     <TextView
-        android:text="@string/about_copyright"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/tv_copyright"
-        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="@string/about_copyright"
+        android:textSize="18sp" />
 
     <TextView
-        android:text="@string/about_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_byauthor"
-        android:textSize="18sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:text="@string/about_pagerversion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/tvabout_version"
-        android:textSize="18sp"
-        android:layout_marginBottom="61dp"
-        android:layout_alignBottom="@+id/tv_byauthor"
-        android:layout_alignStart="@+id/tv_byauthor" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tv_byauthor"
+        android:layout_below="@+id/imageView"
+        android:layout_marginTop="18dp"
+        android:text="@string/about_pagerversion"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_byauthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_copyright"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="55dp"
+        android:text="@string/about_author"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/firetruck" />
 </RelativeLayout>

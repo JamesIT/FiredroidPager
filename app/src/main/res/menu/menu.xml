@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/item1"
-        android:title="@string/menu_settings"
         android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="always"
-        android:orderInCategory="3"/>
+        android:orderInCategory="3"
+        android:title="@string/menu_settings"
+        app:showAsAction="always"/>
     <item android:id="@+id/item2"
-        android:title="@string/hazmat_info"
         android:icon="@drawable/ic_biohazard"
-        app:showAsAction="always"
-        android:orderInCategory="1"/>
+        android:orderInCategory="1"
+        android:title="@string/hazmat_info"
+        app:showAsAction="always"/>
     <item android:id="@+id/item3"
-        android:title="@string/app_info"
         android:icon="@drawable/ic_info_black_24dp"
-        app:showAsAction="always"
-        android:orderInCategory="2"/>
+        android:orderInCategory="2"
+        android:title="@string/app_info"
+        app:showAsAction="always"/>
 </menu>

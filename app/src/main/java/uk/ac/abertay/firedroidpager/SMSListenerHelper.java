@@ -8,19 +8,16 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class SMSListenerHelper extends BroadcastReceiver {
+    // Set debug tag
+    public final String ETAG = "Incoming SMS: ";
+    // Define instance of SQLDatabaseHelper
+    SQLDatabaseHelper DB;
+    // Create instance of Main Activity
+    MainActivity main = new MainActivity();
     // Define SmsMessage.
     private String smsMesg;
     private String smsFrom;
     private String sms;
-
-    // Set debug tag
-    public final String ETAG = "Incoming SMS: ";
-
-    // Define instance of SQLDatabaseHelper
-    SQLDatabaseHelper DB;
-
-    // Create instance of Main Activity
-    MainActivity main = new MainActivity();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -47,6 +44,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
                 }
 
             } catch (Exception e) {
+                // Debugging - Exception Handling
             Log.d("Exception caught",e.getMessage());
             }
                 // Remove null word from SMS data into sms string
@@ -56,22 +54,30 @@ public class SMSListenerHelper extends BroadcastReceiver {
                 Log.i(ETAG,"SQL: SMS Data - " + sms);
                 // Check SMS for keyword
                 if (sms.contains("FIRE") || sms.contains("EMS")) {
-                // Insert SMS data
-                boolean insertData = DB.insertDataDB(sms);
-                // Error logging.
-                if(insertData == true) {
+                    // Insert SMS data
+                    boolean insertData = DB.insertDataDB(sms);
+                    // Error logging.
+                    if(insertData == true) {
+                    // Debug Message
                     Log.i(ETAG," SQL: Saved Successfully. " + sms);
                     main.aStatus = true;
-                } else {
-                    Log.i(ETAG," SQL: Not Saved Successfully.");
+
+                    } else {
+                        Log.i(ETAG," SQL: Not Saved Successfully.");
                         }
-            } else {
-                    Log.i(ETAG," Not 911 Call");
-                    main.aStatus = false;
+
+                // Start Main Activity - Triggers Alert.
+                Intent i = new Intent(context,MainActivity.class);
+                // Flag needed (Current context != Activity due to being background service).
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+
+                    } else {
+                        Log.i(ETAG," Not 911 Call");
+                        main.aStatus = false;
                 }
             }
         }
-
     }
 
 
