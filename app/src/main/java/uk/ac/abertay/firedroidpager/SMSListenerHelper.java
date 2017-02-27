@@ -16,8 +16,6 @@ public class SMSListenerHelper extends BroadcastReceiver {
     MainActivity main = new MainActivity();
     // Define SmsMessage.
     private String smsMesg;
-    private String smsFrom;
-    private String sms;
     private String Alert1;
     private String Alert2;
     private Boolean DisableApp = false;
@@ -45,7 +43,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
                 for (int i = 0; i < currSMS.length; i++) {
                     currSMS[i] = SmsMessage.createFromPdu((byte[]) smspdu[i]);
-                    smsFrom = currSMS[i].getOriginatingAddress();
+                    String smsFrom = currSMS[i].getOriginatingAddress();
                     smsMesg += currSMS[i].getMessageBody();
                 }
 
@@ -54,7 +52,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
             Log.d("Exception caught",e.getMessage());
             }
                 // Remove null word from SMS data into sms string
-                sms = smsMesg.substring(4);
+            String sms = smsMesg.substring(4);
                  // Debug
                 Log.i(ETAG,"SQL: SMS Data - " + sms);
             // Check SMS for keyword - From Shared Preferences

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public String Audio = "nz_callout";
     // Define Arrays/Adapters/String/Buttons ect
     String sms = "";
+    Boolean Vibrate = true;
     ArrayAdapter<String> adapter;
     ArrayList<String> SMSArray;
     Button bclearalerts;
@@ -184,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void Alert911() {
+        Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
         // Set Handset Volume - 100%. (Incase of volume turned off).
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
@@ -191,10 +193,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int sound_id = getApplicationContext().getResources().getIdentifier(Audio, "raw", this.getPackageName());
         // Create Media Player
         alert = MediaPlayer.create(this, sound_id);
-        // Initialize Vibrator
-        Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-        // Set Vibrate Pattern
-        long[] pattern = {0, 100, 1000};
         // Setup Dialog View
         View mView = getLayoutInflater().inflate(R.layout.dialog_alert, null);
         // Define Button
@@ -208,12 +206,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog = mBuilder.create();
         // Show Dialog
         dialog.show();
+        // Check if vibration disabled.
+        if (Vibrate) {
+        // Set Vibrate Pattern
+        long[] pattern = {0, 100, 1000};
+            // Initialize Vibrator
+            Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            // Set Vibrate Pattern
+            v.vibrate(pattern, 0);
+        }
         // Pager Volume - Loop, Maximum Volume. Start
         alert.setVolume(100,100);
         alert.setLooping(true);
         alert.start();
-        // Set Vibrate Pattern
-        v.vibrate(pattern, 0);
+
     }
 
     public void Alert911Stop() {

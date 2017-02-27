@@ -28,7 +28,10 @@
         <activity
             android:name=".SettingsActivity"
             android:screenOrientation="portrait" />
-        <receiver android:name=".SMSListenerHelper">
+
+        <receiver
+            android:name=".SMSListenerHelper"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
