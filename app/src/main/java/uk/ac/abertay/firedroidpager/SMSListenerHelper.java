@@ -24,10 +24,10 @@ public class SMSListenerHelper extends BroadcastReceiver {
         DB = new SQLDatabaseHelper(context);
         // Execute code if SMS_RECEIVED intent.
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
-        // Define bundle + Initalize - Get intent extras.
+            // Define bundle + Initialize - Get intent extras.
         Bundle smsbundle = intent.getExtras(); // Get SMS message
-        SmsMessage[] currSMS = null;
-        // Define + Initalize object and get pdus.
+            SmsMessage[] currSMS;
+            // Define + Initialize object and get pdus.
         // Execute code if not null.
         if (smsbundle != null) {
 

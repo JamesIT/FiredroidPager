@@ -25,9 +25,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     Integer VibrateM = 1;
     Boolean DisableApp = false;
 
-    // Create instance of SharedPreferenceHelper
-    SharedPreferencesHelper SPH = new SharedPreferencesHelper();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

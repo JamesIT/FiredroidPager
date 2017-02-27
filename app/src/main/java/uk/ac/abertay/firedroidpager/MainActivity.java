@@ -157,12 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void populateListView() {
-        // Initalize ListView
+        // Initialize ListView
         ListView list=(ListView)findViewById(R.id.smslistview);
-        // Initalize Arraylist+Adapter
+        // Initialize Arraylist+Adapter
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
-        // Initalize DB Helper
+        // Initialize DB Helper
         DB = new SQLDatabaseHelper(this);
         // Get SMS Data
         sms = DB.getDataDB();
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int sound_id = getApplicationContext().getResources().getIdentifier(Audio, "raw", this.getPackageName());
         // Create Media Player
         alert = MediaPlayer.create(this, sound_id);
-        // Initalize Vibrator
+        // Initialize Vibrator
         Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         // Set Vibrate Pattern
         long[] pattern = {0, 100, 1000};
@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button dismiss = (Button) mView.findViewById(R.id.button_dismiss);
         // Setup Listener
         dismiss.setOnClickListener(this);
-        // Define & Initalize Dialog
+        // Define & Initialize Dialog
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
         // Set dialog view & create dialog
         mBuilder.setView(mView);
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void Alert911Stop() {
-    // Initalize Vibrator
+        // Initialize Vibrator
     Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
     // Stop volume & Release/Reset if !=null && isPlaying
     if (alert!=null) {

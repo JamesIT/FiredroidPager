@@ -78,8 +78,9 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 } else {
                     StringBuffer buffer = new StringBuffer();
                     while (data.moveToNext()) {
-                        buffer.append("SMS: " + data.getString(1) + "\n");
-                        buffer.append("Alarm Time: " + data.getString(2) + "\n\n");
+                        // Chained Buffer Append Calls.
+                        buffer.append("SMS: ").append(data.getString(1)).append("\n");
+                        buffer.append("Alarm Time: ").append(data.getString(2)).append("\n\n");
                         datastring = buffer.toString();
                     }
                     Log.i("SMS", "SQL: DATA" + datastring);
