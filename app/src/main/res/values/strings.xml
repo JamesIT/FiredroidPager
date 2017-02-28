@@ -13,4 +13,14 @@
     <string name="about_copyright">© Copyright James Hemmings 2017</string>
     <string name="emergency_call">!! Emergency !! - 911 Call</string>
     <string name="firetruck_txtdesc">Firetruck Image</string>
+    <string name="button_hazsearchtxt">Search</string>
+    <string name="button_clearalertstxt">Clear Alerts</string>
+    <string name="edit_hazmatsearchhint">Enter Chemical or UN ID.</string>
+    <string name="button_savesettingstxt">Save</string>
+    <string name="editText_keywordhint">Enter keyword.</string>
+    <string name="textView_vibratetxt">Enable Vibration</string>
+    <string name="button_setaudiotxt">SET AUDIO</string>
+    <string name="editText_keyword2hint">Enter keyword.</string>
+    <string name="button_dismisstxt">DISMISS ALERT</string>
+    <string name="tv_alerttxt">STILL F STANDBY 950 MILLIONAIRES LN OLY Apt:  Cross Streets : HILLSIDE AVE * FOX HOLLOW RD   http://maps.google.com/maps?q=+41.24483%20-77.07871  *FIRE-14 8002916142</string>
 </resources>

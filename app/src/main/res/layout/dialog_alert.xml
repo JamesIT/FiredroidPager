@@ -21,7 +21,7 @@
         android:id="@+id/tv_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STILL F STANDBY 950 MILLIONAIRES LN OLY Apt:  Cross Streets : HILLSIDE AVE * FOX HOLLOW RD   http://maps.google.com/maps?q=+41.24483%20-77.07871  *FIRE-14 8002916142"
+        android:text="@string/tv_alerttxt"
         android:textSize="18sp" />
 
     <com.google.android.gms.maps.MapView
@@ -35,6 +35,6 @@
         android:layout_width="match_parent"
         android:layout_height="66dp"
         android:layout_weight="0.04"
-        android:text="DISMISS ALERT" />
+        android:text="@string/button_dismisstxt" />
 
 </LinearLayout>

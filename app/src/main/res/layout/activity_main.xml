@@ -28,6 +28,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:text="Clear Alerts" />
+        android:text="@string/button_clearalertstxt" />
 
 </RelativeLayout>

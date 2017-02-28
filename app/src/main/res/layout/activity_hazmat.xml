@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/button_hazsearch"
         android:ems="10"
-        android:hint="Enter Chemical or UN ID."
+        android:hint="@string/edit_hazmatsearchhint"
         android:inputType="textWebEditText" />
 
     <Button
@@ -36,5 +36,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="Search" />
+        android:text="@string/button_hazsearchtxt" />
 </RelativeLayout>

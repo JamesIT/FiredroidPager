@@ -17,7 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:text="Save" />
+        android:text="@string/button_savesettingstxt" />
 
     <EditText
         android:id="@+id/editText_keyword"
@@ -28,7 +28,7 @@
         android:layout_marginTop="27dp"
         android:layout_toEndOf="@+id/textView_setaudio"
         android:ems="10"
-        android:hint="Enter keyword."
+        android:hint="@string/editText_keywordhint"
         android:inputType="textPersonName" />
 
     <TextView
@@ -58,7 +58,7 @@
         android:layout_alignStart="@+id/editText_keyword"
         android:layout_below="@+id/editText_keyword"
         android:ems="10"
-        android:hint="Enter keyword."
+        android:hint="@string/editText_keyword2hint"
         android:inputType="textPersonName" />
 
     <TextView
@@ -88,7 +88,7 @@
         android:layout_alignEnd="@+id/textView"
         android:layout_below="@+id/editText_keyword2"
         android:layout_marginEnd="15dp"
-        android:text="set audio" />
+        android:text="@string/button_setaudiotxt" />
 
     <TextView
         android:id="@+id/textView_vibrate"
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button_setaudio"
-        android:text="Enable Vibration"
+        android:text="@string/textView_vibratetxt"
         android:textSize="18sp" />
 
     <CheckBox
