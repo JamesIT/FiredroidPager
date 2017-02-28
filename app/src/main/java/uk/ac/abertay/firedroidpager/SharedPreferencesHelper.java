@@ -3,10 +3,10 @@ package uk.ac.abertay.firedroidpager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class SharedPreferencesHelper {
+class SharedPreferencesHelper {
 
     // Set Shared Preferences XML File Name
-    public final static String FILE = "Config";
+    private final static String FILE = "Config";
 
     // Set Shared Preference (String)
     public static void setSharedPreferenceString(Context context, String key, String value){

@@ -11,27 +11,24 @@ import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // Define Buttons/Boxes ect ect
-    Button savepref;
-    Button setaudio;
-    CheckBox enablevibrationcb;
-    CheckBox disableappcb;
-    EditText editalert1;
-    EditText editalert2;
-    String Alert1 = "";
-    String Alert2 = "";
-    String Audio = "cadpage";
-    Boolean Vibrate = true;
-    Integer VibrateM = 1;
-    Boolean DisableApp = false;
+    private CheckBox enablevibrationcb;
+    private CheckBox disableappcb;
+    private EditText editalert1;
+    private EditText editalert2;
+    private String Alert1 = "";
+    private String Alert2 = "";
+    private String Audio = "cadpage";
+    private Boolean Vibrate = true;
+    private Integer VibrateM = 1;
+    private Boolean DisableApp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         // Initialize/Set Buttons/Text Boxes ect.
-        savepref = (Button)findViewById(R.id.button_savesettings);
-        setaudio = (Button)findViewById(R.id.button_setaudio);
+        Button savepref = (Button) findViewById(R.id.button_savesettings);
+        Button setaudio = (Button) findViewById(R.id.button_setaudio);
         enablevibrationcb = (CheckBox)findViewById(R.id.checkBox_vibration);
         disableappcb = (CheckBox)findViewById(R.id.checkBox_disableapp);
         editalert1 = (EditText)findViewById(R.id.editText_keyword);

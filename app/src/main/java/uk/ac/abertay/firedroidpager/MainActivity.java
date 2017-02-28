@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -34,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean Vibrate = true;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> SMSArray;
-    private Button bclearalerts;
     // Define DatabaseHelper
     private SQLDatabaseHelper DB;
     private ListView list;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Initialize Arrays/Adapter/Button ect
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
-        bclearalerts = (Button)findViewById(R.id.button_clearalerts);
+        Button bclearalerts = (Button) findViewById(R.id.button_clearalerts);
         // Sets on click listener.
         bclearalerts.setOnClickListener(this);
         MainActivity.context = getApplicationContext();
@@ -183,6 +183,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void Alert911() {
+        // Prevents "avoid passing null as view root" error
+        // Define Viewgroup, set to null.
+        final ViewGroup nullParent = null;
         Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
         // Set Handset Volume - 100%. (Incase of volume turned off).
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Create Media Player
         alert = MediaPlayer.create(this, sound_id);
         // Setup Dialog View
-        View mView = getLayoutInflater().inflate(R.layout.dialog_alert, null);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_alert, nullParent);
         // Define Button
         Button dismiss = (Button) mView.findViewById(R.id.button_dismiss);
         // Setup Listener
