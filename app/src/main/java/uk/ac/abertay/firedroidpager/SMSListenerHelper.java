@@ -26,6 +26,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
         Alert1 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey1", Alert1);
         Alert2 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey2", Alert2);
         DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(MainActivity.getAppContext(), "DisableSMS", DisableApp);
+
         // Execute code if SMS_RECEIVED intent.
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED") && !DisableApp) {
             // Define bundle + Initialize - Get intent extras.

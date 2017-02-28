@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static Context context;
     private final String ETAG = "Incoming SMS: ";
     // Set/Define Audio Variable String
-    private String Audio = "nz_callout";
+    private String Audio = "";
     private Boolean Vibrate = true;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> SMSArray;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         // Populate List View
         populateListView();
+        // If alert status == true, run pager function.
         if (aStatus) {
             Alert911();
             aStatus = false;
@@ -183,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void Alert911() {
+        // Get Custom Alert (From Saved Preferences)
+        Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
         // Prevents "avoid passing null as view root" error
         // Define Viewgroup, set to null.
         final ViewGroup nullParent = null;

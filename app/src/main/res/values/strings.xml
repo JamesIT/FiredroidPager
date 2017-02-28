@@ -23,4 +23,9 @@
     <string name="editText_keyword2hint">Enter keyword.</string>
     <string name="button_dismisstxt">DISMISS ALERT</string>
     <string name="tv_alerttxt">STILL F STANDBY 950 MILLIONAIRES LN OLY Apt:  Cross Streets : HILLSIDE AVE * FOX HOLLOW RD   http://maps.google.com/maps?q=+41.24483%20-77.07871  *FIRE-14 8002916142</string>
+    <string name="audiofile1">Cad Page</string>
+    <string name="audiofile2">Monty ALS</string>
+    <string name="audiofile3">NZ Callout</string>
+    <string name="audiofile4">Station Buzz</string>
+    <string name="settingsdialog_header">Select SMS Alert Tone</string>
 </resources>

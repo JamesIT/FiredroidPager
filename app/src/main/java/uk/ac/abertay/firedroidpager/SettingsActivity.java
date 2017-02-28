@@ -1,26 +1,39 @@
 package uk.ac.abertay.firedroidpager;
 
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
+    // Set Audio File Names - Static Values.
+    private final String Audio1 = "cadpage";
+    private final String Audio2 = "monty_als";
+    private final String Audio3 = "nz_callout";
+    private final String Audio4 = "stationbuzz";
+    Button setaudio;
     private CheckBox enablevibrationcb;
     private CheckBox disableappcb;
     private EditText editalert1;
     private EditText editalert2;
     private String Alert1 = "";
     private String Alert2 = "";
-    private String Audio = "cadpage";
+    private String Audio = "";
     private Boolean Vibrate = true;
     private Integer VibrateM = 1;
     private Boolean DisableApp = false;
+    private AlertDialog dialog;
+    private RadioGroup audio_rg;
+    private RadioButton radioButton_selectaudio1, radioButton_selectaudio2, radioButton_selectaudio3, radioButton_selectaudio4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +41,19 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
         // Initialize/Set Buttons/Text Boxes ect.
         Button savepref = (Button) findViewById(R.id.button_savesettings);
-        Button setaudio = (Button) findViewById(R.id.button_setaudio);
+        setaudio = (Button) findViewById(R.id.button_setaudio);
         enablevibrationcb = (CheckBox)findViewById(R.id.checkBox_vibration);
         disableappcb = (CheckBox)findViewById(R.id.checkBox_disableapp);
         editalert1 = (EditText)findViewById(R.id.editText_keyword);
         editalert2 = (EditText)findViewById(R.id.editText_keyword2);
+        audio_rg = (RadioGroup) findViewById(R.id.audio_rg);
+        radioButton_selectaudio1 = (RadioButton) findViewById(R.id.radioButton_selectaudio1);
+        radioButton_selectaudio2 = (RadioButton) findViewById(R.id.radioButton_selectaudio2);
+        radioButton_selectaudio3 = (RadioButton) findViewById(R.id.radioButton_selectaudio3);
+        radioButton_selectaudio4 = (RadioButton) findViewById(R.id.radioButton_selectaudio4);
         // Set on click listener.
         savepref.setOnClickListener(this);
+        setaudio.setOnClickListener(this);
         // Load Shared Preferences (To UI).
         Alert1 = SharedPreferencesHelper.getSharedPreferenceString(this, "AlertKey1", Alert1);
         editalert1.setText(Alert1);
@@ -45,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
         disableappcb.setChecked(DisableApp);
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
+        setaudio.setText(Audio);
         VibrateM = SharedPreferencesHelper.getSharedPreferenceInt(this, "VibrateMode", VibrateM);
     }
 
@@ -57,10 +77,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 Alert2 = editalert2.getText().toString();
                 Vibrate = enablevibrationcb.isChecked();
                 DisableApp = disableappcb.isChecked();
-                Audio = "cadpage";
+                Audio = setaudio.getText().toString();
                 VibrateM = 1;
                 // Check strings for null data, log/error if null data.
-                if(Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
+                if (Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
                     SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey1", Alert1);
                     SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey2", Alert2);
                     SharedPreferencesHelper.setSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
@@ -69,9 +89,55 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     SharedPreferencesHelper.setSharedPreferenceInt(this, "VibrateMode", VibrateM);
                 } else {
                     // Error (No Data Entered) - Toast + Log.d
-                    Toast.makeText(getApplicationContext(),"ERROR: No Data Entered. Enter Keywords",Toast.LENGTH_LONG).show();
-                    Log.i("Settings","SettingsActivity - " + "Error - No Data!!");
+                    Toast.makeText(getApplicationContext(), "ERROR: No Data Entered. Enter Keywords", Toast.LENGTH_LONG).show();
+                    Log.i("Settings", "SettingsActivity - " + "Error - No Data!!");
                 }
+                break;
+            case R.id.button_setaudio:
+                final ViewGroup nullParent = null;
+                View mView = getLayoutInflater().inflate(R.layout.dialog_audiosettings, nullParent);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
+                mBuilder.setView(mView);
+                dialog = mBuilder.create();
+                // Show Dialog
+                dialog.show();
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+        // Check which radio button was clicked
+        switch (view.getId()) {
+            case R.id.radioButton_selectaudio1:
+                if (checked)
+                    Audio = Audio1;
+                dialog.dismiss();
+                setaudio.setText(Audio);
+                break;
+            case R.id.radioButton_selectaudio2:
+                if (checked)
+                    Audio = Audio2;
+                dialog.dismiss();
+                setaudio.setText(Audio);
+                break;
+            case R.id.radioButton_selectaudio3:
+                if (checked)
+                    Audio = Audio3;
+                dialog.dismiss();
+                setaudio.setText(Audio);
+                break;
+            case R.id.radioButton_selectaudio4:
+                if (checked)
+                    Audio = Audio4;
+                dialog.dismiss();
+                setaudio.setText(Audio);
+                break;
+            default:
                 break;
         }
     }
