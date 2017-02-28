@@ -15,11 +15,6 @@ import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // Set Audio File Names - Static Values.
-    private final String Audio1 = "cadpage";
-    private final String Audio2 = "monty_als";
-    private final String Audio3 = "nz_callout";
-    private final String Audio4 = "stationbuzz";
     Button setaudio;
     private CheckBox enablevibrationcb;
     private CheckBox disableappcb;
@@ -32,8 +27,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private Integer VibrateM = 1;
     private Boolean DisableApp = false;
     private AlertDialog dialog;
-    private RadioGroup audio_rg;
-    private RadioButton radioButton_selectaudio1, radioButton_selectaudio2, radioButton_selectaudio3, radioButton_selectaudio4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +39,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         disableappcb = (CheckBox)findViewById(R.id.checkBox_disableapp);
         editalert1 = (EditText)findViewById(R.id.editText_keyword);
         editalert2 = (EditText)findViewById(R.id.editText_keyword2);
-        audio_rg = (RadioGroup) findViewById(R.id.audio_rg);
-        radioButton_selectaudio1 = (RadioButton) findViewById(R.id.radioButton_selectaudio1);
-        radioButton_selectaudio2 = (RadioButton) findViewById(R.id.radioButton_selectaudio2);
-        radioButton_selectaudio3 = (RadioButton) findViewById(R.id.radioButton_selectaudio3);
-        radioButton_selectaudio4 = (RadioButton) findViewById(R.id.radioButton_selectaudio4);
+        RadioGroup audio_rg = (RadioGroup) findViewById(R.id.audio_rg);
+        RadioButton radioButton_selectaudio1 = (RadioButton) findViewById(R.id.radioButton_selectaudio1);
+        RadioButton radioButton_selectaudio2 = (RadioButton) findViewById(R.id.radioButton_selectaudio2);
+        RadioButton radioButton_selectaudio3 = (RadioButton) findViewById(R.id.radioButton_selectaudio3);
+        RadioButton radioButton_selectaudio4 = (RadioButton) findViewById(R.id.radioButton_selectaudio4);
         // Set on click listener.
         savepref.setOnClickListener(this);
         setaudio.setOnClickListener(this);
@@ -114,26 +107,30 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.radioButton_selectaudio1:
+                String audio1 = "cadpage";
                 if (checked)
-                    Audio = Audio1;
+                    Audio = audio1;
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio2:
+                String audio2 = "monty_als";
                 if (checked)
-                    Audio = Audio2;
+                    Audio = audio2;
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio3:
+                String audio3 = "nz_callout";
                 if (checked)
-                    Audio = Audio3;
+                    Audio = audio3;
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio4:
+                String audio4 = "stationbuzz";
                 if (checked)
-                    Audio = Audio4;
+                    Audio = audio4;
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
