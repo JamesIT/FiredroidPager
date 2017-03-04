@@ -70,39 +70,56 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
 
         // Define DB Helper
         final SQLiteDatabase db = this.getWritableDatabase();
+        // Get SMS Alerts from DB into Cursor(Data). Sort by latest alerts, desc and limit to five entries.
+        Cursor data = db.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME + " ORDER BY _id DESC LIMIT 3", null);
 
-                Cursor data = db.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME, null);
-
-                if (data.getCount() == 0) {
-                    Log.i("SMS", "SQL: No Data To Read??.");
-                } else {
-                    StringBuffer buffer = new StringBuffer();
-                    while (data.moveToNext()) {
-                        // Chained Buffer Append Calls.
-                        buffer.append("SMS: ").append(data.getString(1)).append("\n");
-                        buffer.append("Alarm Time: ").append(data.getString(2)).append("\n\n");
-                        datastring = buffer.toString();
-                    }
-                    Log.i("SMS", "SQL: DATA" + datastring);
+        try {
+            // If no data, log error.
+            if (data.getCount() == 0) {
+                Log.i("SMS", "SQL: No Data To Read??.");
+            } else {
+                StringBuffer buffer = new StringBuffer();
+                while (data.moveToNext()) {
+                    // Chained Buffer Append Calls.
+                    buffer.append("SMS: ").append(data.getString(1)).append("\n");
+                    buffer.append("Alarm Time: ").append(data.getString(2)).append("\n\n");
+                    datastring = buffer.toString();
                 }
-                // Close DB Cursor
-                data.close();
-                return datastring;
-    }
-
-    public String removeDataDB() {
-        // Define SQLite DB & Get writable database.
-        final SQLiteDatabase db = this.getWritableDatabase();
-        // Initialize cursor & Execute raw query (Delete data).
-        Cursor data = db.rawQuery("DELETE FROM " + TABLE_NAME, null);
-        // If no data or is data log message
-        if (data.getCount() == 0) {
-            Log.i("SMS", "SQL: No Data To Delete.");
-        } else {
-            Log.i("SMS", "SQL: Data Deleted.");
+                Log.i("SMS", "SQL: DATA" + datastring);
+                    }
+        } catch (Exception e) {
+            // Debugging - Exception Handling
+            Log.d("Exception caught", e.getMessage());
         }
-        // Close Database.
+        // Close DB Cursor
         data.close();
+        // Close Database
+        db.close();
         return datastring;
     }
+
+    public void removeDataDB() {
+        // Multi-threading. Remove Data from DB in worker thread.
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // Define SQLite DB & Get writable database.
+                SQLiteDatabase db = getWritableDatabase();
+                // Initialize cursor & Execute raw query (Delete data).
+                Cursor data = db.rawQuery("DELETE FROM " + TABLE_NAME, null);
+                // If no data or is data log message
+                if (data.getCount() == 0) {
+                    Log.i("SMS", "SQL: No Data To Delete.");
+                } else {
+                    Log.i("SMS", "SQL: Data Deleted.");
+                }
+                // Close Cursor.
+                data.close();
+                // Close Database
+                db.close();
+            }
+        }).start();
+    }
+
 }

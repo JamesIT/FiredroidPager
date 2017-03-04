@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Define Alert Dialog/Audio
     private MediaPlayer alert;
     private AlertDialog dialog;
-
+    private TextView tvalert;
+    private String sms;
+    private String alarmMsg;
     public static Context getAppContext() {
         return MainActivity.context;
     }
@@ -154,8 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Clear SMS Alerting SQLite.
             DB = new SQLDatabaseHelper(this);
             DB.removeDataDB();
-            // Close DB
-            DB.close();
             populateListView();
             break;
         }
@@ -169,8 +170,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
         // Initialize DB Helper
         DB = new SQLDatabaseHelper(this);
+        // Clear SMS Data
+        sms = "";
         // Get SMS Data
-        String sms = DB.getDataDB();
+        sms = DB.getDataDB();
         // Add SMS to adapter
         adapter.add(sms);
         // Set Adapter
@@ -179,11 +182,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.notifyDataSetChanged();
         // Debug Message
         Log.i(ETAG,"SQL: Read " + sms);
-        // Close DB
-        DB.close();
     }
 
     private void Alert911() {
+        // Add latest alert to AlertMsg - Strip by new lines. (Check first if not null - Prevent possible crash).
+        if (sms != null && !sms.trim().isEmpty()) {
+            String[] splited = sms.split("\\r\\n|\\n|\\r");
+            alarmMsg = splited[0] + splited[1];
+        }
         // Get Custom Alert (From Saved Preferences)
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
         // Prevents "avoid passing null as view root" error
@@ -210,6 +216,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog = mBuilder.create();
         // Show Dialog
         dialog.show();
+        tvalert = (TextView) mView.findViewById(R.id.tv_alert);
+        tvalert.setText(alarmMsg);
         // Check if vibration disabled.
         if (Vibrate) {
         // Set Vibrate Pattern

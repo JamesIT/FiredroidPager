@@ -35,7 +35,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
             // Define + Initialize object and get pdus.
         // Execute code if not null.
         if (smsbundle != null) {
-
+            // Exception Handling (Try function/Catch)
             try {
                 Object[] smspdu = (Object[]) smsbundle.get("pdus");
                 // Prevent possible null pointer exception
