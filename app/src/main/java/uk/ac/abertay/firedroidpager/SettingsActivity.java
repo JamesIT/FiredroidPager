@@ -32,21 +32,33 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        loadButtons();
+        setListeners();
+        loadPrefs();
+    }
+
+    private void loadButtons() {
         // Initialize/Set Buttons/Text Boxes ect.
-        Button savepref = (Button) findViewById(R.id.button_savesettings);
-        setaudio = (Button) findViewById(R.id.button_setaudio);
-        enablevibrationcb = (CheckBox)findViewById(R.id.checkBox_vibration);
-        disableappcb = (CheckBox)findViewById(R.id.checkBox_disableapp);
-        editalert1 = (EditText)findViewById(R.id.editText_keyword);
-        editalert2 = (EditText)findViewById(R.id.editText_keyword2);
+        enablevibrationcb = (CheckBox) findViewById(R.id.checkBox_vibration);
+        disableappcb = (CheckBox) findViewById(R.id.checkBox_disableapp);
+        editalert1 = (EditText) findViewById(R.id.editText_keyword);
+        editalert2 = (EditText) findViewById(R.id.editText_keyword2);
         RadioGroup audio_rg = (RadioGroup) findViewById(R.id.audio_rg);
         RadioButton radioButton_selectaudio1 = (RadioButton) findViewById(R.id.radioButton_selectaudio1);
         RadioButton radioButton_selectaudio2 = (RadioButton) findViewById(R.id.radioButton_selectaudio2);
         RadioButton radioButton_selectaudio3 = (RadioButton) findViewById(R.id.radioButton_selectaudio3);
         RadioButton radioButton_selectaudio4 = (RadioButton) findViewById(R.id.radioButton_selectaudio4);
+    }
+
+    private void setListeners() {
         // Set on click listener.
+        Button savepref = (Button) findViewById(R.id.button_savesettings);
         savepref.setOnClickListener(this);
+        setaudio = (Button) findViewById(R.id.button_setaudio);
         setaudio.setOnClickListener(this);
+    }
+
+    private void loadPrefs() {
         // Load Shared Preferences (To UI).
         Alert1 = SharedPreferencesHelper.getSharedPreferenceString(this, "AlertKey1", Alert1);
         editalert1.setText(Alert1);
@@ -73,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 Audio = setaudio.getText().toString();
                 VibrateM = 1;
                 // Check strings for null data, log/error if null data.
+                // TODO: Add try/catch and toast error handling (sharedprefs). Load+Save.
                 if (Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
                     SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey1", Alert1);
                     SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey2", Alert2);
@@ -149,4 +162,5 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
+
 }

@@ -52,12 +52,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // Android Life Cycle - Create/Close/Cleanup Properly
+    //https://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupApp();
-        checkPerms();
+        requestSmsPermission();
         // Populate List View
         populateListView();
         // If alert status == true, run pager function.
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             alert.release();
         }
         // TODO: Add Thread Names + Cleanup in onPause/onStop.
+        // http://www.vogella.com/tutorials/AndroidLifeCycle/article.html
     }
 
     @Override
@@ -150,14 +152,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     }
 
-    // Request runtime permissions - RECEIVE_SMS.
+    // Request runtime permissions (If API > 23) - RECEIVE_SMS.
     private void requestSmsPermission() {
+        if (Build.VERSION.SDK_INT < 23) {
+            Log.i(ETAG, " Permissions: " + "SDK Less Than 23 - No Perms Needed.");
+        } else {
         String permission = Manifest.permission.RECEIVE_SMS;
         int grant = ContextCompat.checkSelfPermission(this, permission);
         if (grant != PackageManager.PERMISSION_GRANTED) {
             String[] permission_list = new String[1];
             permission_list[0] = permission;
             ActivityCompat.requestPermissions(this, permission_list, 1);
+        }
         }
     }
 
@@ -171,16 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bclearalerts.setOnClickListener(this);
     }
 
-    private void checkPerms() {
-        // Check SDK version, if less than SDK 23 (Error). Else, request permissions.
-        if (Build.VERSION.SDK_INT < 23) {
-            Log.i(ETAG, " Permissions: " + "SDK Less Than 23 - No Perms Needed.");
-        } else {
-            // Request Android Permissions (SMS Read/Write).
-            requestSmsPermission();
-        }
-    }
-
+    // Populate ListView with Emergency SMS Alerts
     private void populateListView() {
         // Initialize ListView
         ListView list = (ListView) findViewById(R.id.smslistview);
@@ -203,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i(ETAG,"SQL: Read " + sms);
     }
 
+    // Start 911 Alerting
     private void Alert911() {
         // Add latest alert to AlertMsg - Strip by new lines. (Check first if not null - Prevent possible crash).
         if (sms != null && !sms.trim().isEmpty()) {
@@ -211,18 +209,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         // Get Custom Alert (From Saved Preferences)
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
+        // Get sharedpreferences (Vibration)
+        Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
+        // Start AlertAudio
+        alertAudio();
+        // Start AlertDialog
+        alertDialog();
+    }
+
+    // Stop 911 Alert
+    private void Alert911Stop() {
+        // Initialize Vibrator
+        Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        // Stop volume & Release/Reset if !=null && isPlaying
+        if (alert != null) {
+            if (alert.isPlaying())
+                alert.setLooping(false);
+            alert.stop();
+            alert.reset();
+            alert.release();
+            alert = null;
+        }
+        // Disable Vibration
+        v.vibrate(0);
+        // Closes Current Activity - Save Memory Usage ect...
+        this.finish();
+    }
+
+    private void alertDialog() {
         // Prevents "avoid passing null as view root" error
         // Define Viewgroup, set to null (Prevents an error/warning).
         final ViewGroup nullParent = null;
-        // Get sharedpreferences (Vibration)
-        Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
-        // Set Handset Volume - 100%. (Incase of volume turned off).
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC,am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
-        // Get sound_id - File Name (String Audio)
-        int sound_id = getApplicationContext().getResources().getIdentifier(Audio, "raw", this.getPackageName());
-        // Create Media Player
-        alert = MediaPlayer.create(this, sound_id);
         // Setup Dialog View
         View mView = getLayoutInflater().inflate(R.layout.dialog_alert, nullParent);
         // Define Button
@@ -240,38 +257,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvalert.setText(alarmMsg);
         // Clear alertMsg string.
         alarmMsg = "";
+    }
+
+    private void alertAudio() {
+        // Set Handset Volume - 100%. (Incase of volume turned off).
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+        // Get sound_id - File Name (String Audio)
+        int sound_id = getApplicationContext().getResources().getIdentifier(Audio, "raw", this.getPackageName());
+        // Create Media Player
+        alert = MediaPlayer.create(this, sound_id);
         // Check if vibration disabled.
         if (Vibrate) {
-        // Set Vibrate Pattern
-        long[] pattern = {0, 100, 1000};
+            // Set Vibrate Pattern
+            long[] pattern = {0, 100, 1000};
             // Initialize Vibrator
             Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
             // Set Vibrate Pattern
             v.vibrate(pattern, 0);
         }
         // Pager Volume - Loop, Maximum Volume. Start
-        alert.setVolume(100,100);
+        alert.setVolume(100, 100);
         alert.setLooping(true);
         alert.start();
-
-    }
-
-    private void Alert911Stop() {
-        // Initialize Vibrator
-    Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-    // Stop volume & Release/Reset if !=null && isPlaying
-    if (alert!=null) {
-        if (alert.isPlaying())
-            alert.setLooping(false);
-            alert.stop();
-    alert.reset();
-    alert.release();
-    alert=null;
-    }
-    // Disable Vibration
-    v.vibrate(0);
-    // Closes Current Activity - Save Memory Usage ect...
-    this.finish();
     }
 
 }
+

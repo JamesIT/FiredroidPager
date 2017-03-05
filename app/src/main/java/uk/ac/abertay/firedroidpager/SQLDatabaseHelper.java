@@ -76,7 +76,7 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Insert Database Function - Override
+    // Insert Database Function
     public void insertDataDB(final String sql1) {
         // Get date/time
         Date currentDate = new Date(System.currentTimeMillis());
@@ -103,10 +103,12 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
         }).start();
     }
 
+    // TODO: Implement threading.
     // Get all tables from DB
     public String getDataDB() {
-        // Initialize Cursor
+        // Initialize Cursor, set to null for now.
         Cursor data = null;
+
         try {
             // Get SMS Alerts from DB into Cursor(Data). Sort by latest alerts, desc and limit to five entries.
             data = sdb.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME + " ORDER BY _id DESC LIMIT 3", null);
@@ -115,13 +117,17 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
             if (data.getCount() == 0) {
                 Log.i("SMS", "SQL: No Data To Read??.");
             } else {
+                // Initialize + define String Builder
                 StringBuilder buffer = new StringBuilder();
+                // Move Cursor to next row, and append data to datastring.
                 while (data.moveToNext()) {
                     // Chained Buffer Append Calls.
                     buffer.append("SMS: ").append(data.getString(1)).append("\n");
                     buffer.append("Alarm Time: ~[").append(data.getString(2)).append("]~").append("\n\n");
+                    // Add data from buffer to string.
                     datastring = buffer.toString();
                 }
+                // Debug Message
                 Log.i(ETAG, "SQL: DATA" + datastring);
                     }
         } catch (Exception e) {
@@ -134,6 +140,7 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
             closeCursor(data);
             closeDB();
         }
+
         // Return data
         return datastring;
     }
@@ -143,10 +150,9 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Initialize Cursor
+                // Initialize Cursor - Set to null for now.
                 Cursor data = null;
                 try {
-                    // Define SQLite DB & Get writable database.
                     // Initialize cursor & Execute raw query (Delete data).
                     data = sdb.rawQuery("DELETE FROM " + TABLE_NAME, null);
                     // If no data or is data log message

@@ -18,6 +18,7 @@ public class HazmatActivity extends AppCompatActivity implements View.OnClickLis
         Button hazsearch = (Button) findViewById(R.id.button_hazsearch);
         // Set Button listener.
         hazsearch.setOnClickListener(this);
+        hazmatSearch("");
     }
 
     @Override
