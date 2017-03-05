@@ -8,12 +8,8 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class SMSListenerHelper extends BroadcastReceiver {
-    // Set debug tag
-    private final String ETAG = "Incoming SMS: ";
     // Create instance of Main Activity
     MainActivity main = new MainActivity();
-    // Define instance of SQLDatabaseHelper
-    private SQLDatabaseHelper DB;
     // Define SmsMessage.
     private String smsMesg;
     private String Alert1;
@@ -23,13 +19,14 @@ public class SMSListenerHelper extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // Set SQLDatabaseHelper as instance with context (From onreceive).
-        DB = new SQLDatabaseHelper(context);
+        SQLDatabaseHelper SDH = new SQLDatabaseHelper(context);
         // Get Shared Preferences into string values.
         Alert1 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey1", Alert1);
         Alert2 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey2", Alert2);
         DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(MainActivity.getAppContext(), "DisableSMS", DisableApp);
 
         // Execute code if SMS_RECEIVED intent.
+        String ETAG = "Incoming SMS: ";
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED") && !DisableApp) {
             // Define bundle + Initialize - Get intent extras.
             Bundle smsbundle = intent.getExtras(); // Get SMS message
@@ -51,9 +48,9 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
             } catch (Exception e) {
                 // Debugging - Exception Handling
-                Log.d("Exception caught", e.getMessage());
+                Log.e(ETAG, "Exception caught " + e.getMessage());
                 // Set SMS message, incase of error. Prevent further errors. (Due to null message).
-                smsMesg = "SMS: Error! Exception";
+                smsMesg = "SMS: Error! Exception ";
             }
             // Remove null word from SMS data into sms string
             String sms = smsMesg.substring(4);
@@ -63,7 +60,7 @@ public class SMSListenerHelper extends BroadcastReceiver {
             // Check SMS for keyword - From Shared Preferences
             if (sms.contains(Alert1) || sms.contains(Alert2)) {
                 // Insert SMS data
-                DB.insertDataDB(sms);
+                SDH.insertDataDB(sms);
                 // Set Alert Activation Variable (aStatus).
                 MainActivity.aStatus = true;
                 // Start Main Activity - Triggers Alert.

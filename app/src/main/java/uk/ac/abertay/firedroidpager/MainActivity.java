@@ -30,14 +30,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static Boolean aStatus = false;
     private static Context context;
-    private final String ETAG = "Incoming SMS: ";
+    private final String ETAG = "MainActivity: ";
     // Set/Define Audio Variable String
     private String Audio = "";
     private Boolean Vibrate = true;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> SMSArray;
     // Define DatabaseHelper
-    private SQLDatabaseHelper DB;
+    private SQLDatabaseHelper SDH;
     private ListView list;
     private Button button_dismiss;
     // Define Alert Dialog/Audio
@@ -45,28 +45,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AlertDialog dialog;
     private String sms;
     private String alarmMsg;
+
+    // Set static context
     public static Context getAppContext() {
         return MainActivity.context;
     }
 
+    // Android Life Cycle - Create/Close/Cleanup Properly
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Initialize Arrays/Adapter/Button ect
-        SMSArray = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
-        Button bclearalerts = (Button) findViewById(R.id.button_clearalerts);
-        // Sets on click listener.
-        bclearalerts.setOnClickListener(this);
-        MainActivity.context = getApplicationContext();
-        // Check SDK version, if less than SDK 23 (Error). Else, request permissions.
-        if(Build.VERSION.SDK_INT < 23){
-            Log.i(ETAG," Permissions: " + "SDK Less Than 23 - No Perms Needed.");
-        }else {
-            // Request Android Permissions (SMS Read/Write).
-            requestSmsPermission();
-        }
+        setupApp();
+        checkPerms();
         // Populate List View
         populateListView();
         // If alert status == true, run pager function.
@@ -76,15 +67,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    // Request runtime permissions
-    private void requestSmsPermission() {
-        String permission = Manifest.permission.RECEIVE_SMS;
-        int grant = ContextCompat.checkSelfPermission(this, permission);
-        if ( grant != PackageManager.PERMISSION_GRANTED) {
-            String[] permission_list = new String[1];
-            permission_list[0] = permission;
-            ActivityCompat.requestPermissions(this, permission_list, 1);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Get writable database.
+        SDH.getWritableDatabase();
+        populateListView();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop & Release Audio
+        if (alert != null) {
+            alert.release();
         }
+        // TODO: Add Thread Names + Cleanup in onPause/onStop.
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Close SQLite DB
+        SDH.close();
+        // Stop & Release Audio
+        if (alert != null) {
+            alert.release();
+        }
+
     }
 
     // Action Bar Menu - Override
@@ -120,26 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    // Android Life Cycle - Close/Cleanup Properly
-    @Override
-    protected void onResume() {
-        super.onResume();
-        populateListView();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Close SQLite DB
-        DB.close();
-
-        // Stop & Release Audio
-        if (alert != null) {
-            alert.release();
-        }
-
-    }
-
     @Override
     public void onClick(View v) {
     switch (v.getId()) {
@@ -154,10 +144,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             break;
         case R.id.button_clearalerts:
             // Clear SMS Alerting SQLite.
-            DB = new SQLDatabaseHelper(this);
-            DB.removeDataDB();
+            SDH.removeDataDB();
             populateListView();
             break;
+    }
+    }
+
+    // Request runtime permissions - RECEIVE_SMS.
+    private void requestSmsPermission() {
+        String permission = Manifest.permission.RECEIVE_SMS;
+        int grant = ContextCompat.checkSelfPermission(this, permission);
+        if (grant != PackageManager.PERMISSION_GRANTED) {
+            String[] permission_list = new String[1];
+            permission_list[0] = permission;
+            ActivityCompat.requestPermissions(this, permission_list, 1);
+        }
+    }
+
+    private void setupApp() {
+        // Initialize Arrays/Adapter/Button ect
+        SMSArray = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
+        MainActivity.context = getApplicationContext();
+        Button bclearalerts = (Button) findViewById(R.id.button_clearalerts);
+        // Sets on click listener.
+        bclearalerts.setOnClickListener(this);
+    }
+
+    private void checkPerms() {
+        // Check SDK version, if less than SDK 23 (Error). Else, request permissions.
+        if (Build.VERSION.SDK_INT < 23) {
+            Log.i(ETAG, " Permissions: " + "SDK Less Than 23 - No Perms Needed.");
+        } else {
+            // Request Android Permissions (SMS Read/Write).
+            requestSmsPermission();
         }
     }
 
@@ -168,11 +188,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SMSArray = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
         // Initialize DB Helper
-        DB = new SQLDatabaseHelper(this);
+        SDH = new SQLDatabaseHelper(this);
         // Clear SMS Data
         sms = "";
         // Get SMS Data
-        sms = DB.getDataDB();
+        sms = SDH.getDataDB();
         // Add SMS to adapter
         adapter.add(sms);
         // Set Adapter

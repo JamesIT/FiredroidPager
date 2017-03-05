@@ -19,6 +19,7 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
     private static final String COL2 = "MSG";
     private static final String COL3 = "TIMESTAMP";
     private static final Integer DBVER = 1;
+    private final String ETAG = "SQLDatabaseHelper: ";
     // Define SQLiteDB object, get writable DB.
     private final SQLiteDatabase sdb = this.getWritableDatabase();
     // Define/initialize data string.
@@ -29,17 +30,39 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
         super(context,DATABASE_NAME,null,1);
     }
 
-    // Create Database Function - Override
+    // Android Lifecycle - onCreate.
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Threading - Run off UI thread.
+        createDB();
+    }
+
+    // Check if DB open and close.
+    private void closeDB() {
+        if (!sdb.isOpen()) {
+            // Close Database
+            sdb.close();
+        }
+    }
+
+    // Check if cursor open and close.
+    private void closeCursor(Cursor data) {
+        // Check if cursor is closed.
+        if (data != null && !data.isClosed()) {
+            // Close Cursor.
+            data.close();
+        }
+    }
+
+    // Create SQLite DB.
+    private void createDB() {
+        //Threading - Use worker thread.
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 String createTable = "CREATE TABLE " + TABLE_NAME + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " + "MSG TEXT, TIMESTAMP TEXT)";
                 sdb.execSQL(createTable);
-                sdb.close();
+                closeDB();
             }
         }).start();
     }
@@ -75,16 +98,18 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
                 // Insert data (To Table)
                 sdb.insert(TABLE_NAME, null, contentVal);
                 // Close DB After Insertion
-                sdb.close();
+                closeDB();
             }
         }).start();
     }
 
     // Get all tables from DB
     public String getDataDB() {
+        // Initialize Cursor
+        Cursor data = null;
         try {
             // Get SMS Alerts from DB into Cursor(Data). Sort by latest alerts, desc and limit to five entries.
-            Cursor data = sdb.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME + " ORDER BY _id DESC LIMIT 3", null);
+            data = sdb.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME + " ORDER BY _id DESC LIMIT 3", null);
 
             // If no data, log error.
             if (data.getCount() == 0) {
@@ -97,18 +122,17 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
                     buffer.append("Alarm Time: ~[").append(data.getString(2)).append("]~").append("\n\n");
                     datastring = buffer.toString();
                 }
-                // Close cursor.
-                data.close();
-                Log.i("SMS", "SQL: DATA" + datastring);
+                Log.i(ETAG, "SQL: DATA" + datastring);
                     }
         } catch (Exception e) {
+            //TODO: http://stackoverflow.com/questions/21619618/sqlexception-error-handling-in-android
             // Debugging - Exception Handling
-            Log.d("Exception caught", e.getMessage());
+            Log.e(ETAG, "Exception caught " + e.getMessage());
             // Set datastring message, incase of error. Prevent further errors. (Due to null message).
-            datastring = "Error! Exception";
+            datastring = "Error! Exception " + e;
         } finally {
-            // Close Database - must be closed to prevent possible memory leak.
-            sdb.close();
+            closeCursor(data);
+            closeDB();
         }
         // Return data
         return datastring;
@@ -117,22 +141,27 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
     public void removeDataDB() {
         //Threading. Remove Data from DB in worker thread.
         new Thread(new Runnable() {
-
             @Override
             public void run() {
-                // Define SQLite DB & Get writable database.
-                // Initialize cursor & Execute raw query (Delete data).
-                Cursor data = sdb.rawQuery("DELETE FROM " + TABLE_NAME, null);
-                // If no data or is data log message
-                if (data.getCount() == 0) {
-                    Log.i("SMS", "SQL: No Data To Delete.");
-                } else {
-                    Log.i("SMS", "SQL: Data Deleted.");
+                // Initialize Cursor
+                Cursor data = null;
+                try {
+                    // Define SQLite DB & Get writable database.
+                    // Initialize cursor & Execute raw query (Delete data).
+                    data = sdb.rawQuery("DELETE FROM " + TABLE_NAME, null);
+                    // If no data or is data log message
+                    if (data.getCount() == 0) {
+                        Log.i("SMS", "SQL: No Data To Delete.");
+                    } else {
+                        Log.i("SMS", "SQL: Data Deleted.");
+                    }
+                } catch (Exception e) {
+                    // Debugging - Exception Handling
+                    Log.e(ETAG, "Exception caught " + e.getMessage());
+                } finally {
+                    closeCursor(data);
+                    closeDB();
                 }
-                // Close Cursor.
-                data.close();
-                // Close Database
-                sdb.close();
             }
         }).start();
     }
