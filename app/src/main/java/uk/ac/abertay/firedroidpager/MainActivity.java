@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Define Alert Dialog/Audio
     private MediaPlayer alert;
     private AlertDialog dialog;
-    private TextView tvalert;
     private String sms;
     private String alarmMsg;
     public static Context getAppContext() {
@@ -187,14 +186,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void Alert911() {
         // Add latest alert to AlertMsg - Strip by new lines. (Check first if not null - Prevent possible crash).
         if (sms != null && !sms.trim().isEmpty()) {
-            String[] splited = sms.split("\\r\\n|\\n|\\r");
-            alarmMsg = splited[0] + splited[1];
+            // Get substring, all data before ]~ (Unique, less chance of an SMS containing the data).
+            alarmMsg = sms.substring(0, sms.indexOf(']')) + "]~";
         }
         // Get Custom Alert (From Saved Preferences)
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
         // Prevents "avoid passing null as view root" error
-        // Define Viewgroup, set to null.
+        // Define Viewgroup, set to null (Prevents an error/warning).
         final ViewGroup nullParent = null;
+        // Get sharedpreferences (Vibration)
         Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
         // Set Handset Volume - 100%. (Incase of volume turned off).
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -216,8 +216,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog = mBuilder.create();
         // Show Dialog
         dialog.show();
-        tvalert = (TextView) mView.findViewById(R.id.tv_alert);
+        TextView tvalert = (TextView) mView.findViewById(R.id.tv_alert);
         tvalert.setText(alarmMsg);
+        // Clear alertMsg string.
+        alarmMsg = "";
         // Check if vibration disabled.
         if (Vibrate) {
         // Set Vibrate Pattern

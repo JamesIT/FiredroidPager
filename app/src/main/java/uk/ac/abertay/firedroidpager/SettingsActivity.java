@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button setaudio;
+    private Button setaudio;
     private CheckBox enablevibrationcb;
     private CheckBox disableappcb;
     private EditText editalert1;
@@ -87,8 +87,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.button_setaudio:
+                // Prevent null error message. Set viewgroup.
                 final ViewGroup nullParent = null;
+                // Create view, set/inflate layout.
                 View mView = getLayoutInflater().inflate(R.layout.dialog_audiosettings, nullParent);
+                // Build dialog and set view.
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
                 mBuilder.setView(mView);
                 dialog = mBuilder.create();
@@ -108,29 +111,37 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.radioButton_selectaudio1:
                 String audio1 = "cadpage";
+                // If checked set audio
                 if (checked)
                     Audio = audio1;
+                // Dismiss dialog and set audio button to selected option
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio2:
                 String audio2 = "monty_als";
+                // If checked set audio
                 if (checked)
                     Audio = audio2;
+                // Dismiss dialog and set audio button to selected option
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio3:
                 String audio3 = "nz_callout";
+                // If checked set audio
                 if (checked)
                     Audio = audio3;
+                // Dismiss dialog and set audio button to selected option
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;
             case R.id.radioButton_selectaudio4:
                 String audio4 = "stationbuzz";
+                // If checked set audio
                 if (checked)
                     Audio = audio4;
+                // Dismiss dialog and set audio button to selected option
                 dialog.dismiss();
                 setaudio.setText(Audio);
                 break;

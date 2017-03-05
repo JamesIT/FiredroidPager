@@ -9,11 +9,11 @@ import android.util.Log;
 
 public class SMSListenerHelper extends BroadcastReceiver {
     // Set debug tag
-    public final String ETAG = "Incoming SMS: ";
-    // Define instance of SQLDatabaseHelper
-    SQLDatabaseHelper DB;
+    private final String ETAG = "Incoming SMS: ";
     // Create instance of Main Activity
     MainActivity main = new MainActivity();
+    // Define instance of SQLDatabaseHelper
+    private SQLDatabaseHelper DB;
     // Define SmsMessage.
     private String smsMesg;
     private String Alert1;
@@ -22,7 +22,9 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // Set SQLDatabaseHelper as instance with context (From onreceive).
         DB = new SQLDatabaseHelper(context);
+        // Get Shared Preferences into string values.
         Alert1 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey1", Alert1);
         Alert2 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey2", Alert2);
         DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(MainActivity.getAppContext(), "DisableSMS", DisableApp);
@@ -32,11 +34,10 @@ public class SMSListenerHelper extends BroadcastReceiver {
             // Define bundle + Initialize - Get intent extras.
             Bundle smsbundle = intent.getExtras(); // Get SMS message
             SmsMessage[] currSMS;
-            // Define + Initialize object and get pdus.
         // Execute code if not null.
         if (smsbundle != null) {
             // Exception Handling (Try function/Catch)
-            try {
+            try {   // Define + Initialize object and get pdus.
                 Object[] smspdu = (Object[]) smsbundle.get("pdus");
                 // Prevent possible null pointer exception
                 assert smspdu != null;
@@ -50,37 +51,33 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
             } catch (Exception e) {
                 // Debugging - Exception Handling
-            Log.d("Exception caught",e.getMessage());
+                Log.d("Exception caught", e.getMessage());
+                // Set SMS message, incase of error. Prevent further errors. (Due to null message).
+                smsMesg = "SMS: Error! Exception";
             }
-                // Remove null word from SMS data into sms string
+            // Remove null word from SMS data into sms string
             String sms = smsMesg.substring(4);
                  // Debug
-                Log.i(ETAG,"SQL: SMS Data - " + sms);
+            Log.i(ETAG, "SQL: SMS Data - " + sms);
+
             // Check SMS for keyword - From Shared Preferences
             if (sms.contains(Alert1) || sms.contains(Alert2)) {
-                    // Insert SMS data
-                    boolean insertData = DB.insertDataDB(sms);
-                    // Error logging.
-                    if (insertData) {
-                    // Debug Message
-                    Log.i(ETAG," SQL: Saved Successfully. " + sms);
-                        MainActivity.aStatus = true;
-
-                    } else {
-                        Log.i(ETAG," SQL: Not Saved Successfully.");
-                        }
-
+                // Insert SMS data
+                DB.insertDataDB(sms);
+                // Set Alert Activation Variable (aStatus).
+                MainActivity.aStatus = true;
                 // Start Main Activity - Triggers Alert.
                 Intent i = new Intent(context,MainActivity.class);
                 // Flag needed (Current context != Activity due to being background service).
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
-
                     } else {
-                        Log.i(ETAG," Not 911 Call");
+                // If not 911 call, log message and set Alert Status boolean to false. (Prevents alarm).
+                Log.i(ETAG, " Not 911 Call");
                     MainActivity.aStatus = false;
                 }
             }
+
         } else {
             // Debug Message - SMS Alerting Disabled
             Log.i(ETAG, " SMS: " + "SMS Alerts Disabled.");
