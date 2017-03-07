@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static Boolean aStatus = false;
     private static Context context;
-    private final String ETAG = "MainActivity: ";
+    private static String sms;
+    private static String alarmMsg;
     // Set/Define Audio Variable String
     private String Audio = "";
     private Boolean Vibrate = true;
@@ -43,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Define Alert Dialog/Audio
     private MediaPlayer alert;
     private AlertDialog dialog;
-    private String sms;
-    private String alarmMsg;
 
     // Set static context
     public static Context getAppContext() {
@@ -59,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         setupApp();
         requestSmsPermission();
-        // Populate List View
-        populateListView();
+        // Get SQLData & Populate List View.
+        new ATask().execute();
         // If alert status == true, run pager function.
         if (aStatus) {
             Alert911();
@@ -71,9 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        // Get writable database.
-        SDH.getWritableDatabase();
-        populateListView();
+        // Populate List View
+        new ATask().execute();
     }
 
     @Override
@@ -96,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (alert != null) {
             alert.release();
         }
+        //TODO: Close ASYNCTask here.
 
     }
 
@@ -142,21 +141,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialog.dismiss();
             // Stop Pager Alerting
             Alert911Stop();
-            populateListView();
             break;
         case R.id.button_clearalerts:
             // Clear SMS Alerting SQLite.
             SDH.removeDataDB();
-            populateListView();
+            new ATask().execute();
             break;
     }
     }
 
     // Request runtime permissions (If API > 23) - RECEIVE_SMS.
     private void requestSmsPermission() {
-        if (Build.VERSION.SDK_INT < 23) {
-            Log.i(ETAG, " Permissions: " + "SDK Less Than 23 - No Perms Needed.");
-        } else {
         String permission = Manifest.permission.RECEIVE_SMS;
         int grant = ContextCompat.checkSelfPermission(this, permission);
         if (grant != PackageManager.PERMISSION_GRANTED) {
@@ -164,13 +159,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             permission_list[0] = permission;
             ActivityCompat.requestPermissions(this, permission_list, 1);
         }
-        }
     }
 
     private void setupApp() {
         // Initialize Arrays/Adapter/Button ect
-        SMSArray = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
+        SMSArray = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.da_items, SMSArray);
         MainActivity.context = getApplicationContext();
         Button bclearalerts = (Button) findViewById(R.id.button_clearalerts);
         // Sets on click listener.
@@ -178,18 +172,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // Populate ListView with Emergency SMS Alerts
-    private void populateListView() {
+    private void populateListView(String result) {
         // Initialize ListView
         ListView list = (ListView) findViewById(R.id.smslistview);
         // Initialize Arraylist+Adapter
-        SMSArray = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.da_items, SMSArray);
+        SMSArray = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.da_items, SMSArray);
         // Initialize DB Helper
         SDH = new SQLDatabaseHelper(this);
-        // Clear SMS Data
-        sms = "";
         // Get SMS Data
-        sms = SDH.getDataDB();
+        sms = result;
         // Add SMS to adapter
         adapter.add(sms);
         // Set Adapter
@@ -197,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Notify Adapter Changes
         adapter.notifyDataSetChanged();
         // Debug Message
+        String ETAG = "MainActivity: ";
         Log.i(ETAG,"SQL: Read " + sms);
     }
 
@@ -255,8 +248,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
         TextView tvalert = (TextView) mView.findViewById(R.id.tv_alert);
         tvalert.setText(alarmMsg);
-        // Clear alertMsg string.
-        alarmMsg = "";
     }
 
     private void alertAudio() {
@@ -280,6 +271,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alert.setVolume(100, 100);
         alert.setLooping(true);
         alert.start();
+    }
+
+    // ASyncTask Class - Update UI Thread With SQLite Info (From Worker Thread).
+    public class ATask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            // Initialize & Define database helper.
+            SDH = new SQLDatabaseHelper(context);
+            // Get SQL Data (To String) + Close Object.
+            String data = SDH.getDataDB();
+            SDH.close();
+            return data; // Return SMS Information to next method (onPostExecute).
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            // Populatelistview on UI thread with result from worker thread.
+            populateListView(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Nothing to see here.
+        }
+
     }
 
 }

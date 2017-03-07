@@ -11,7 +11,7 @@ import android.view.WindowManager;
 public class SMSListenerHelper extends BroadcastReceiver {
     // Create instance of Main Activity
     MainActivity main = new MainActivity();
-    // Define SmsMessage.
+    // Define/Initialize SmsMessage.
     private String smsMesg;
     private String Alert1;
     private String Alert2;
@@ -19,6 +19,9 @@ public class SMSListenerHelper extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        // Define/initialize debugging ETAG.
+        String ETAG = "Incoming SMS: ";
 
         // Set SQLDatabaseHelper as instance with context (From onreceive).
         SQLDatabaseHelper SDH = new SQLDatabaseHelper(context);
@@ -28,14 +31,12 @@ public class SMSListenerHelper extends BroadcastReceiver {
         Alert2 = SharedPreferencesHelper.getSharedPreferenceString(MainActivity.getAppContext(), "AlertKey2", Alert2);
         DisableApp = SharedPreferencesHelper.getSharedPreferenceBoolean(MainActivity.getAppContext(), "DisableSMS", DisableApp);
 
-        // Execute code if SMS_RECEIVED intent.
-        String ETAG = "Incoming SMS: ";
-
+        // Run if intent is SMS_RECEIVED and has not been disabled via user settings. (DisableSMS).
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED") && !DisableApp) {
             // Define bundle + Initialize - Get intent extras.
             Bundle smsbundle = intent.getExtras(); // Get SMS message
             SmsMessage[] currSMS;
-
+            //TODO: Implement threading
             // Execute code if not null.
         if (smsbundle != null) {
             // Exception Handling (Try function/Catch)

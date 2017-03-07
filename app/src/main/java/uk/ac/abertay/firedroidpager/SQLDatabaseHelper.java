@@ -11,7 +11,6 @@ import android.util.Log;
 import java.sql.Date;
 
 class SQLDatabaseHelper extends SQLiteOpenHelper {
-
     public static final String COL1 = "_id";
     // Define database fields
     private static final String DATABASE_NAME = "d1ebu1g124.db";
@@ -103,7 +102,6 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
         }).start();
     }
 
-    // TODO: Implement threading.
     // Get all tables from DB
     public String getDataDB() {
         // Initialize Cursor, set to null for now.
@@ -173,3 +171,4 @@ class SQLDatabaseHelper extends SQLiteOpenHelper {
     }
 
 }
+
