@@ -36,5 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
         android:text="@string/button_hazsearchtxt" />
 </RelativeLayout>

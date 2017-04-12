@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         RadioButton radioButton_selectaudio2 = (RadioButton) findViewById(R.id.radioButton_selectaudio2);
         RadioButton radioButton_selectaudio3 = (RadioButton) findViewById(R.id.radioButton_selectaudio3);
         RadioButton radioButton_selectaudio4 = (RadioButton) findViewById(R.id.radioButton_selectaudio4);
+
     }
 
     private void setListeners() {

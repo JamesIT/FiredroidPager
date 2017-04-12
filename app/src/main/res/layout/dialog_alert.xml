@@ -3,38 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
+    android:shape="rectangle"
     android:weightSum="1">
 
     <TextView
         android:id="@+id/tv_alertinfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="0.05"
         android:text="@string/emergency_call"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
+        android:textStyle="bold"
         tools:shadowColor="@android:color/background_dark" />
 
     <TextView
         android:id="@+id/tv_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:text="@string/tv_alerttxt"
         android:textSize="18sp" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.87" />
 
     <Button
         android:id="@+id/button_dismiss"
         android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:layout_weight="0.04"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:text="@string/button_dismisstxt" />
 
 </LinearLayout>

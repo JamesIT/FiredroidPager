@@ -17,6 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
+        android:background="@color/colorPrimary"
         android:text="@string/button_savesettingstxt" />
 
     <EditText
@@ -48,7 +49,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="@string/settings_info"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/editText_keyword2"
@@ -88,6 +90,7 @@
         android:layout_alignEnd="@+id/textView"
         android:layout_below="@+id/editText_keyword2"
         android:layout_marginEnd="15dp"
+        android:background="@android:color/transparent"
         android:text="@string/button_setaudiotxt" />
 
     <TextView

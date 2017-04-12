@@ -77,12 +77,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
+        // Close SQLite DB
+        SDH.close();
         // Stop & Release Audio
         if (alert != null) {
             alert.release();
         }
-        // TODO: Add Thread Names + Cleanup in onPause/onStop.
-        // http://www.vogella.com/tutorials/AndroidLifeCycle/article.html
     }
 
     @Override
@@ -94,8 +94,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (alert != null) {
             alert.release();
         }
-        //TODO: Close ASYNCTask here.
-
     }
 
     // Action Bar Menu - Override
@@ -274,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // ASyncTask Class - Update UI Thread With SQLite Info (From Worker Thread).
-    public class ATask extends AsyncTask<String, String, String> {
+    private class ATask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {

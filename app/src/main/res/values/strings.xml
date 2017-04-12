@@ -3,7 +3,7 @@
     <string name="menu_settings">Settings</string>
     <string name="hazmat_info">Hazmat DB</string>
     <string name="app_info">About</string>
-    <string name="settings_info">Modify application settings below.</string>
+    <string name="settings_info">Modify application settings below:</string>
     <string name="keyword_alert">Alert Keyword 1</string>
     <string name="keyword_alert2">Alert Keyword 2</string>
     <string name="disable_app">Disable SMS Alerting</string>
@@ -11,7 +11,7 @@
     <string name="about_pagerversion">Firedroid Pager v1.00</string>
     <string name="about_author">By James Hemmings</string>
     <string name="about_copyright">© Copyright James Hemmings 2017</string>
-    <string name="emergency_call">!! Emergency !! - 911 Call</string>
+    <string name="emergency_call">E-Page Alert</string>
     <string name="firetruck_txtdesc">Firetruck Image</string>
     <string name="button_hazsearchtxt">Search</string>
     <string name="button_clearalertstxt">Clear Alerts</string>
@@ -27,5 +27,5 @@
     <string name="audiofile2">Monty ALS</string>
     <string name="audiofile3">NZ Callout</string>
     <string name="audiofile4">Station Buzz</string>
-    <string name="settingsdialog_header">Select SMS Alert Tone</string>
+    <string name="settingsdialog_header">Select SMS Alert Tone:</string>
 </resources>
