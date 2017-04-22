@@ -29,11 +29,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static Boolean aStatus = false;
+    public static String alarmMsg;
     private static Context context;
-    private static String sms;
-    private static String alarmMsg;
     // Set/Define Audio Variable String
-    private String Audio = "";
+    private String Audio = "cadpage";
     private Boolean Vibrate = true;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> SMSArray;
@@ -77,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        // Close SQLite DB
-        SDH.close();
         // Stop & Release Audio
         if (alert != null) {
             alert.release();
@@ -143,7 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         case R.id.button_clearalerts:
             // Clear SMS Alerting SQLite.
             SDH.removeDataDB();
-            new ATask().execute();
+            // Clear View
+            populateListView("");
             break;
     }
     }
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Initialize DB Helper
         SDH = new SQLDatabaseHelper(this);
         // Get SMS Data
-        sms = result;
+        String sms = result;
         // Add SMS to adapter
         adapter.add(sms);
         // Set Adapter
@@ -193,11 +191,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Start 911 Alerting
     private void Alert911() {
-        // Add latest alert to AlertMsg - Strip by new lines. (Check first if not null - Prevent possible crash).
-        if (sms != null && !sms.trim().isEmpty()) {
-            // Get substring, all data before ]~ (Unique, less chance of an SMS containing the data).
-            alarmMsg = sms.substring(0, sms.indexOf(']')) + "]~";
-        }
         // Get Custom Alert (From Saved Preferences)
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
         // Get sharedpreferences (Vibration)
@@ -280,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SDH = new SQLDatabaseHelper(context);
             // Get SQL Data (To String) + Close Object.
             String data = SDH.getDataDB();
+            // Close DB Helper.
             SDH.close();
             return data; // Return SMS Information to next method (onPostExecute).
         }

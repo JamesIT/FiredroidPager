@@ -20,9 +20,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private CheckBox disableappcb;
     private EditText editalert1;
     private EditText editalert2;
-    private String Alert1 = "";
-    private String Alert2 = "";
-    private String Audio = "";
+    private String Alert1 = "EMS";
+    private String Alert2 = "FIRE";
+    private String Audio = "cadpage";
     private Boolean Vibrate = true;
     private Integer VibrateM = 1;
     private Boolean DisableApp = false;
@@ -85,20 +85,32 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 DisableApp = disableappcb.isChecked();
                 Audio = setaudio.getText().toString();
                 VibrateM = 1;
-                // Check strings for null data, log/error if null data.
-                // TODO: Add try/catch and toast error handling (sharedprefs). Load+Save.
-                if (Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
-                    SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey1", Alert1);
-                    SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey2", Alert2);
-                    SharedPreferencesHelper.setSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
-                    SharedPreferencesHelper.setSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
-                    SharedPreferencesHelper.setSharedPreferenceString(this, "AudioName", Audio);
-                    SharedPreferencesHelper.setSharedPreferenceInt(this, "VibrateMode", VibrateM);
-                } else {
-                    // Error (No Data Entered) - Toast + Log.d
-                    Toast.makeText(getApplicationContext(), "ERROR: No Data Entered. Enter Keywords", Toast.LENGTH_LONG).show();
-                    Log.i("Settings", "SettingsActivity - " + "Error - No Data!!");
+
+                try {
+                    // Check strings for null data, log/error if null data.
+                    if (Alert1 != null && !Alert1.isEmpty() || Alert2 != null && !Alert2.isEmpty()) {
+                        SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey1", Alert1);
+                        SharedPreferencesHelper.setSharedPreferenceString(this, "AlertKey2", Alert2);
+                        SharedPreferencesHelper.setSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
+                        SharedPreferencesHelper.setSharedPreferenceBoolean(this, "DisableSMS", DisableApp);
+                        SharedPreferencesHelper.setSharedPreferenceString(this, "AudioName", Audio);
+                        SharedPreferencesHelper.setSharedPreferenceInt(this, "VibrateMode", VibrateM);
+                    } else {
+                        // Error (No Data Entered) - Toast + Log.d
+                        Toast.makeText(getApplicationContext(), "ERROR: No Data Entered. Enter Keywords", Toast.LENGTH_LONG).show();
+                        Log.i("Settings", "SettingsActivity - " + "Error - No Data!!");
+                    }
+                } catch (Exception e) {
+                    // Debugging - Exception Handling
+                    String ETAG = "SettingsActivity: ";
+                    Log.e(ETAG, "Exception caught " + e.getMessage());
+                    // Reset Settings - Incase of Exception.
+                    Alert1 = "FIRE";
+                    Alert2 = "EMS";
+                    Vibrate = true;
+                    DisableApp = false;
                 }
+
                 break;
             case R.id.button_setaudio:
                 // Prevent null error message. Set viewgroup.
@@ -115,7 +127,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             default:
                 break;
         }
-
     }
 
     public void onRadioButtonClicked(View view) {

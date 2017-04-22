@@ -5,16 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.WindowManager;
 
+import java.sql.Date;
+
 public class SMSListenerHelper extends BroadcastReceiver {
-    // Create instance of Main Activity
-    MainActivity main = new MainActivity();
-    // Define/Initialize SmsMessage.
+    // Define/Initialize strings/booleans
     private String smsMesg;
-    private String Alert1;
-    private String Alert2;
+    private String Alert1 = "FIRE";
+    private String Alert2 = "EMS";
     private Boolean DisableApp = false;
 
     @Override
@@ -36,7 +37,6 @@ public class SMSListenerHelper extends BroadcastReceiver {
             // Define bundle + Initialize - Get intent extras.
             Bundle smsbundle = intent.getExtras(); // Get SMS message
             SmsMessage[] currSMS;
-            //TODO: Implement threading
             // Execute code if not null.
         if (smsbundle != null) {
             // Exception Handling (Try function/Catch)
@@ -70,16 +70,24 @@ public class SMSListenerHelper extends BroadcastReceiver {
                 SDH.insertDataDB(sms);
                 // Set Alert Activation Variable (aStatus).
                 MainActivity.aStatus = true;
+                // Get date/time
+                Date currentDate = new Date(System.currentTimeMillis());
+                CharSequence s = DateFormat.format("dd-MM-yyyy hh:mm:ss", currentDate.getTime());
+                // Store date - String
+                final String date = s.toString();
+                // Send alert message - MainActivity
+                MainActivity.alarmMsg = "SMS: " + sms + "\n" + "Alarm Time: " + date + "\n";
                 // Start Main Activity - Triggers Alert.
                 Intent i = new Intent(context,MainActivity.class);
                 // Flag needed (Current context != Activity due to being background service).
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                // Dismiss KeyGuard.
+                // Dismiss KeyGuard (Prompt despite keylock).
                 i.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
                 context.startActivity(i);
                     } else {
                 // If not 911 call, log message and set Alert Status boolean to false. (Prevents alarm).
                 Log.i(ETAG, " Not 911 Call");
+                // Ensure alert is not triggered.
                     MainActivity.aStatus = false;
                 }
             }
