@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.WindowManager;
 
 import java.sql.Date;
 
@@ -55,17 +54,14 @@ public class SMSListenerHelper extends BroadcastReceiver {
                 // Debugging - Exception Handling
                 Log.e(ETAG, "Exception caught " + e.getMessage());
                 // Set SMS message, incase of error. Prevent further errors. (Due to null message).
-                smsMesg = "SMS: Error! Exception ";
+                smsMesg = "Error";
             }
 
             // Remove null word from SMS data into sms string
             String sms = smsMesg.substring(4);
 
-            // Debug
-            Log.i(ETAG, "SQL: SMS Data - " + sms);
-
-            // Check SMS for keyword - From Shared Preferences
-            if (sms.contains(Alert1) || sms.contains(Alert2)) {
+            // Check SMS for keyword - From Shared Preferences. Ensure strings are not empty OR null, to prevent error or wrong SMS being passed.
+            if (Alert1 != null && !Alert1.isEmpty() && Alert2 != null && !Alert2.isEmpty() && sms.contains(Alert1) || sms.contains(Alert2)) {
                 // Insert SMS data
                 SDH.insertDataDB(sms);
                 // Set Alert Activation Variable (aStatus).
@@ -81,21 +77,13 @@ public class SMSListenerHelper extends BroadcastReceiver {
                 Intent i = new Intent(context,MainActivity.class);
                 // Flag needed (Current context != Activity due to being background service).
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                // Dismiss KeyGuard (Prompt despite keylock).
-                i.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
                 context.startActivity(i);
                     } else {
-                // If not 911 call, log message and set Alert Status boolean to false. (Prevents alarm).
-                Log.i(ETAG, " Not 911 Call");
                 // Ensure alert is not triggered.
                     MainActivity.aStatus = false;
                 }
             }
-        } else {
-            // Debug Message - SMS Alerting Disabled
-            Log.i(ETAG, " SMS: " + "SMS Alerts Disabled.");
         }
-
     }
 
 }

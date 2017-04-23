@@ -3,6 +3,7 @@ package uk.ac.abertay.firedroidpager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.format.DateFormat;
@@ -10,20 +11,18 @@ import android.util.Log;
 
 import java.sql.Date;
 
-public class SQLDatabaseHelper extends SQLiteOpenHelper {
+class SQLDatabaseHelper extends SQLiteOpenHelper {
 
     // Define database fields
-    private static final String DATABASE_NAME = "firedroid1337_db.db";
-    private static final String TABLE_NAME = "firedroid1337_smsmsg";
+    private static final String DATABASE_NAME = "firedroid_db.db";
+    private static final String TABLE_NAME = "firedroid_smsmsgs";
     private static final String COL2 = "MSG";
     private static final String COL3 = "TIMESTAMP";
-    private static final Integer DBVER = 1;
     private final String ETAG = "SQLDatabaseHelper: ";
-    // Define SQLiteDB object, get writable DB.
-    private final SQLiteDatabase sdb = this.getWritableDatabase();
     // Define/initialize data string.
     private String datastring = "";
 
+    // Set Context function.
     public SQLDatabaseHelper(Context context) {
         super(context,DATABASE_NAME,null,1);
     }
@@ -50,14 +49,19 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
 
             @Override
             public void run() {
+                try {
                 SQLiteDatabase sdb = getWritableDatabase();
                 String createTable = "CREATE TABLE " + TABLE_NAME + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " + "MSG TEXT, TIMESTAMP TEXT)";
                 sdb.execSQL(createTable);
+                } catch (SQLException e) {
+                    // Debugging - Exception Handling
+                    Log.e(ETAG, "CreateDB: Exception caught " + e.getMessage());
+                }
             }
         }).start();
     }
 
-    // Upgrade Database Function - Override
+    // Upgrade Database Function - Override (Not used).
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
@@ -77,6 +81,7 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
 
             @Override
             public void run() {
+                try {
                 // Set/define contentvalues
                 ContentValues contentVal = new ContentValues();
                 // Put database values into COL2/3
@@ -84,6 +89,10 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 contentVal.put(COL3,date);
                 // Insert data (To Table)
                 long results = db.insert(TABLE_NAME, null, contentVal);
+                } catch (SQLException e) {
+                    // Debugging - Exception Handling
+                    Log.e(ETAG, "insertDataDB: Exception caught " + e.getMessage());
+                }
             }
         }).start();
     }
@@ -92,12 +101,12 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
     public String getDataDB() {
         // Initialize Cursor, set to null for now.
         Cursor data = null;
-        SQLiteDatabase sdb = this.getWritableDatabase();
+        SQLiteDatabase sdb = this.getReadableDatabase();
         try {
             // Get SMS Alerts from DB into Cursor(Data). Sort by latest alerts, desc and limit to five entries.
             data = sdb.rawQuery("SELECT _id,MSG,TIMESTAMP FROM " + TABLE_NAME + " ORDER BY _id DESC LIMIT 3", null);
 
-            // If no data, log error.
+            // If no data, log error. (Debugging)
             if (data.getCount() == 0) {
                 Log.i("SMS", "SQL: No Data To Read??.");
             } else {
@@ -111,17 +120,13 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                     // Add data from buffer to string.
                     datastring = buffer.toString();
                 }
-                // Debug Message
-                Log.i(ETAG, "SQL: DATA" + datastring);
                     }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Debugging - Exception Handling
-            Log.e(ETAG, "Exception caught " + e.getMessage());
-            // Set datastring message, incase of error. Prevent further errors. (Due to null message).
-            datastring = "Error! Exception " + e;
+            Log.e(ETAG, "GetDataDB: Exception caught " + e.getMessage());
         } finally {
             closeCursor(data);
-        }
+        } // Return DB database information.
         return datastring;
     }
 
@@ -136,13 +141,11 @@ public class SQLDatabaseHelper extends SQLiteOpenHelper {
                 try {
                     // Initialize cursor & Execute raw query (Delete data).
                     data = db.rawQuery("DELETE FROM " + TABLE_NAME, null);
-                    // If no data or is data log message
+                    // If no data or is data log message.
                     if (data.getCount() == 0) {
-                        Log.i("SMS", "SQL: No Data To Delete.");
-                    } else {
-                        Log.i("SMS", "SQL: Data Deleted.");
+                        Log.i(ETAG, "SQL: No data!!");
                     }
-                } catch (Exception e) {
+                } catch (SQLException e) {
                     // Debugging - Exception Handling
                     Log.e(ETAG, "Exception caught " + e.getMessage());
                 } finally {

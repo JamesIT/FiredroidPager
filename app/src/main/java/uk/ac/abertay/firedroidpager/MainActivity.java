@@ -19,10 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static Boolean aStatus = false;
     public static String alarmMsg;
     private static Context context;
+    // Define/initialize debugging ETAG.
+    private final String ETAG = "Main Activity: ";
     // Set/Define Audio Variable String
     private String Audio = "cadpage";
     private Boolean Vibrate = true;
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ListView list;
     private Button button_dismiss;
     // Define Alert Dialog/Audio
-    private MediaPlayer alert;
+    private MediaPlayer alert = null;
     private AlertDialog dialog;
 
     // Set static context
@@ -146,18 +150,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     }
 
-    // Request runtime permissions (If API > 23) - RECEIVE_SMS.
+    // Request runtime permissions - RECEIVE_SMS.
     private void requestSmsPermission() {
-        String permission = Manifest.permission.RECEIVE_SMS;
-        int grant = ContextCompat.checkSelfPermission(this, permission);
-        if (grant != PackageManager.PERMISSION_GRANTED) {
-            String[] permission_list = new String[1];
-            permission_list[0] = permission;
-            ActivityCompat.requestPermissions(this, permission_list, 1);
+        // Check RECEIVE_SMS permission. Is it NOT granted?
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECEIVE_SMS)) {
+                // Alert User. Application is disabled due to incorrect permissions.
+                Toast.makeText(getApplicationContext(), "Application Disabled: Reinstall application and allow 'RECIEVE_SMS' permission.\n\n This permission is part of the critical application functionality and must remain enabled.", Toast.LENGTH_LONG).show();
+            } else {
+                // If not denied, request permission.
+                String permission = Manifest.permission.RECEIVE_SMS;
+                int grant = ContextCompat.checkSelfPermission(this, permission);
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    String[] permission_list = new String[1];
+                    permission_list[0] = permission;
+                    ActivityCompat.requestPermissions(this, permission_list, 1);
+                }
+            }
         }
     }
 
     private void setupApp() {
+        // Create Instance of SQLDatabaseHelper.
+        SDH = new SQLDatabaseHelper(this);
         // Initialize Arrays/Adapter/Button ect
         SMSArray = new ArrayList<>();
         adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.da_items, SMSArray);
@@ -174,8 +190,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Initialize Arraylist+Adapter
         SMSArray = new ArrayList<>();
         adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.da_items, SMSArray);
-        // Initialize DB Helper
-        SDH = new SQLDatabaseHelper(this);
         // Get SMS Data
         String sms = result;
         // Add SMS to adapter
@@ -184,21 +198,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         list.setAdapter(adapter);
         // Notify Adapter Changes
         adapter.notifyDataSetChanged();
-        // Debug Message
-        String ETAG = "MainActivity: ";
-        Log.i(ETAG,"SQL: Read " + sms);
     }
 
     // Start 911 Alerting
     private void Alert911() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Get Custom Alert (From Saved Preferences)
         Audio = SharedPreferencesHelper.getSharedPreferenceString(this, "AudioName", Audio);
         // Get sharedpreferences (Vibration)
         Vibrate = SharedPreferencesHelper.getSharedPreferenceBoolean(this, "VibrateSet", Vibrate);
-        // Start AlertAudio
-        alertAudio();
         // Start AlertDialog
         alertDialog();
+        // Start AlertAudio
+        alertAudio();
     }
 
     // Stop 911 Alert
@@ -206,13 +218,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Initialize Vibrator
         Vibrator v = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         // Stop volume & Release/Reset if !=null && isPlaying
-        if (alert != null) {
-            if (alert.isPlaying())
+        try {
+            if (alert != null) {
                 alert.setLooping(false);
-            alert.stop();
-            alert.reset();
-            alert.release();
-            alert = null;
+                alert.stop();
+                alert.reset();
+                alert.release();
+            }
+        } catch (Exception e) {
+            // Debugging - Exception Handling
+            Log.e(ETAG, "Alert911Stop: Exception caught " + e.getMessage());
         }
         // Disable Vibration
         v.vibrate(0);
@@ -284,12 +299,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Populatelistview on UI thread with result from worker thread.
             populateListView(result);
         }
-
-        @Override
-        protected void onPreExecute() {
-            // Nothing to see here.
-        }
-
     }
 
 }
